@@ -1,741 +1,17 @@
 <!DOCTYPE html>
-<html lang="it"><head><script data-bard-client-injected="true">(function(firebaseConfig, initialAuthToken, appId) {
-        window.__firebase_config = firebaseConfig;
-        window.__initial_auth_token = initialAuthToken;
-        window.__app_id = appId;
-            })("\n{\n  \"apiKey\": \"AIzaSyCqyCcs2R2e7AegGjvFAwG98wlamtbHvZY\",\n  \"authDomain\": \"bard-frontend.firebaseapp.com\",\n  \"projectId\": \"bard-frontend\",\n  \"storageBucket\": \"bard-frontend.firebasestorage.app\",\n  \"messagingSenderId\": \"175205271074\",\n  \"appId\": \"1:175205271074:web:2b7bd4d34d33bf38e6ec7b\"\n}\n","eyJhbGciOiJSUzI1NiIsImtpZCI6IjExNjRiNzdiNDMzZDdhMDAyMWI4NjE4YjhjYTU3ZTMyZGI5MWUxMTMiLCJ0eXAiOiJKV1QifQ.eyJzdWIiOiJmaXJlYmFzZS1hZG1pbnNkay1mYnN2Y0BiYXJkLWZyb250ZW5kLmlhbS5nc2VydmljZWFjY291bnQuY29tIiwiYXVkIjoiaHR0cHM6Ly9pZGVudGl0eXRvb2xraXQuZ29vZ2xlYXBpcy5jb20vZ29vZ2xlLmlkZW50aXR5LmlkZW50aXR5dG9vbGtpdC52MS5JZGVudGl0eVRvb2xraXQiLCJ1aWQiOiIxNzI2MDkwMzEyNDgxNzQ0MDMyNCIsImlzcyI6ImZpcmViYXNlLWFkbWluc2RrLWZic3ZjQGJhcmQtZnJvbnRlbmQuaWFtLmdzZXJ2aWNlYWNjb3VudC5jb20iLCJjbGFpbXMiOnsiYXBwSWQiOiJjXzA1YWZhZDRmNjhlMjgxNWZfYmFkZ2VfZ2VuZXJhdG9yLmh0bWwtNDc5In0sImV4cCI6MTc5NDU5MTQ2NiwiaWF0IjoxNzk0NTg3ODY2LCJhbGciOiJSUzI1NiJ9.PoB9g74Yp_ZZHuLGJj94hfpW73_kyyAmkVrRvfcg0XuM0LHEh6-gWfSu2RVT09cC_KkhKjVYyp8Ewo4myT5kZp-WcDa7WxgZWrYsYbzftOcp_rM9LlMvsN4d9bR0g1KPprkj6owNtVZyJUoJiEdpRmuUijx8ICyev2oDME4BeFZtLSLamrY-8j6kTYmWBIfoWABpc43rKb4hmI9gLz6DpwnfHS3bcTu7YIiXN830frN_MXE9GVr-q5RNi7J-64rUZLJUDfWNZKt5npHB1BjWXx1hieps2St4QjHanNycQdyhN9C-IMZWfYZl523Tm8r9XluyDe1V2MYRhUmhS0HRCw","c_05afad4f68e2815f_badge_generator.html-479")</script><script data-bard-client-injected="true">
-  document.addEventListener('input', (event) => {
-    if (event.target && (event.target.isContentEditable || event.target.hasAttribute('contenteditable'))) {
-      const clonedDoc = document.cloneNode(true);
-      const injectedScripts = clonedDoc.querySelectorAll('[data-bard-client-injected="true"]');
-      injectedScripts.forEach(el => el.remove());
-      window.parent.postMessage({
-        type: 'inlineEdit',
-        html: '<!DOCTYPE html>\n' + clonedDoc.documentElement.outerHTML
-      }, '*');
-    }
-  });
-</script><script data-bard-client-injected="true">(function(){'use strict';window.addEventListener("message",a=>{a.data&&a.data.type==="SUPPLEMENTAL_DATA_UPDATE"&&window.dispatchEvent(new CustomEvent("supplementaldataupdate",{detail:a.data.data}))});}).call(this);
-</script><script data-bard-client-injected="true">(function() {
-  const SCROLL_KEYS = new Set([
-    'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight',
-    ' ', 'Spacebar', 'PageUp', 'PageDown', 'Home', 'End',
-  ]);
-  const HORIZONTAL_KEYS = new Set(['ArrowLeft', 'ArrowRight']);
-
-  function isTextEntryTarget(target) {
-    if (!target) return false;
-    const tagName = target.tagName;
-    return tagName === 'INPUT' || tagName === 'TEXTAREA' ||
-        tagName === 'SELECT' || target.isContentEditable === true;
-  }
-
-  // An element absorbs the key only if it both overflows on the axis being
-  // scrolled and is configured to scroll on that axis. The cheap dimension
-  // test runs first because getComputedStyle forces a style recalc, and this
-  // runs on every keypress. Each axis is read from its own longhand: the
-  // 'overflow' shorthand serializes as two values when the axes differ, which
-  // is the common 'overflow-x: hidden; overflow-y: auto' pane.
-  function canScroll(node, horizontal) {
-    const overflows = horizontal ? node.scrollWidth > node.clientWidth
-                                 : node.scrollHeight > node.clientHeight;
-    if (!overflows) return false;
-    const style = window.getComputedStyle(node);
-    const overflow = horizontal ? style.overflowX : style.overflowY;
-    return overflow === 'auto' || overflow === 'scroll';
-  }
-
-  // Walks up from the event target so nested scrollers keep their behavior.
-  // <body> is included because pages that pin the root height make it the
-  // scroll container.
-  function hasScrollableAncestor(target, horizontal) {
-    let node = target;
-    while (node && node !== document.documentElement) {
-      if (canScroll(node, horizontal)) return true;
-      node = node.parentElement;
-    }
-    return false;
-  }
-
-  function rootCanScroll(horizontal) {
-    const scroller = document.scrollingElement || document.documentElement;
-    if (!scroller) return false;
-    // Tolerate a pixel of rounding so subpixel layouts do not look scrollable.
-    return horizontal ? scroller.scrollWidth > window.innerWidth + 1
-                      : scroller.scrollHeight > window.innerHeight + 1;
-  }
-
-  window.addEventListener('keydown', function(event) {
-    if (!SCROLL_KEYS.has(event.key)) return;
-    if (event.defaultPrevented) return;
-    // Alt and Meta turn arrows into browser history navigation, and Ctrl is
-    // reserved for shortcuts, so none of them are scroll intent.
-    if (event.altKey || event.metaKey || event.ctrlKey) return;
-
-    const target = event.target;
-    if (isTextEntryTarget(target)) return;
-
-    // Anything that can still absorb the scroll gets to keep it.
-    const horizontal = HORIZONTAL_KEYS.has(event.key);
-    if (rootCanScroll(horizontal)) return;
-    if (hasScrollableAncestor(target, horizontal)) return;
-
-    event.preventDefault();
-  }, {capture: true, passive: false});
-})();</script><script data-bard-client-injected="true">(function() {
-  // Ensure this script is executed only once
-  if (window.firebaseAuthBridgeScriptLoaded) {
-    return;
-  }
-  window.firebaseAuthBridgeScriptLoaded = true;
-
-  let nextTokenPromiseId = 0;
-
-  // Stores { resolve, reject } for ongoing token requests
-  const pendingTokenPromises = {};
-
-  // Listen for messages from the Host Application
-  window.addEventListener('message', function(event) {
-
-    const messageData = event.data;
-
-  if (messageData && messageData.type === 'RESOLVE_NEW_FIREBASE_TOKEN') {
-      const { success, token, error, promiseId } = messageData ?? {};
-      if (pendingTokenPromises[promiseId]) {
-        if (success) {
-          pendingTokenPromises[promiseId].resolve(token);
-        } else {
-          pendingTokenPromises[promiseId].reject(new Error(error || 'Token refresh failed from host.'));
-        }
-        delete pendingTokenPromises[promiseId];
-      }
-    }
-  });
-
-  // Expose a function for the Generated App to request a new Firebase token
-  window.requestNewFirebaseToken = function() {
-    const currentPromiseId = nextTokenPromiseId++;
-    const promise = new Promise((resolve, reject) => {
-      pendingTokenPromises[currentPromiseId] = { resolve, reject };
-    });
-    if (window.parent && window.parent !== window) {
-      window.parent.postMessage({
-        type: 'REQUEST_NEW_FIREBASE_TOKEN',
-        promiseId: currentPromiseId
-      }, '*');
-    } else {
-      pendingTokenPromises[currentPromiseId].reject(new Error('No parent window to request token from.'));
-      delete pendingTokenPromises[currentPromiseId];
-    }
-    return promise;
-  };
-})();</script><script data-bard-client-injected="true">
-let realOriginalGetUserMedia = null;
-if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-  realOriginalGetUserMedia = navigator.mediaDevices.getUserMedia.bind(navigator.mediaDevices);
-}
-
-(function() {
-  if (navigator.mediaDevices && navigator.mediaDevices.__proto__) {
-    try {
-      Object.defineProperty(navigator.mediaDevices.__proto__, 'getUserMedia', {
-        get: function() {
-          return undefined; // Or throw an error
-        },
-        configurable: false
-      });
-    } catch (error) {
-      console.error("Error defining prototype getter:", error);
-    }
-  }
-})();
-
-(function() {
-  const pendingMediaResolvers = {};
-  let nextMediaPromiseId = 0;
-
-  function requestMediaPermissions(constraints) {
-    const mediaPromiseId = nextMediaPromiseId++;
-    const promise = new Promise((resolve, reject) => {
-      pendingMediaResolvers[mediaPromiseId] = (granted) => {
-        delete pendingMediaResolvers[mediaPromiseId];
-        resolve(granted);
-      };
-    });
-
-    window.parent.postMessage({
-      type: 'requestMediaPermission',
-      constraints: constraints,
-      promiseId: mediaPromiseId,
-    }, '*');
-
-    return promise;
-  }
-
-  let originalGetUserMedia = realOriginalGetUserMedia;
-
-  function interceptGetUserMedia() {
-    if (navigator.mediaDevices) {
-      Object.defineProperty(navigator.mediaDevices, 'getUserMedia', {
-        value: function(constraints) {
-          return requestMediaPermissions(constraints).then((granted) => {
-            if (granted) {
-              if (originalGetUserMedia) {
-                return originalGetUserMedia(constraints);
-              } else {
-                throw new Error("Original getUserMedia not available.");
-              }
-            } else {
-              throw new DOMException('Permission denied', 'NotAllowedError');
-            }
-          });
-        },
-        writable: false,
-        configurable: false
-      });
-    }
-  }
-
-  interceptGetUserMedia();
-
-  const observer = new MutationObserver(function(mutationsList, observer) {
-    for (const mutation of mutationsList) {
-      if (mutation.type === 'reconfigured' && mutation.name === 'getUserMedia' && mutation.object === navigator.mediaDevices) {
-        interceptGetUserMedia();
-      } else if (mutation.type === 'attributes' && mutation.attributeName === 'getUserMedia' && mutation.target === navigator.mediaDevices) {
-        interceptGetUserMedia();
-      } else if (mutation.type === 'childList' && mutation.addedNodes) {
-        mutation.addedNodes.forEach(node => {
-          if (node === navigator.mediaDevices) {
-            interceptGetUserMedia();
-          }
-        });
-      }
-    }
-  });
-
-  function interceptSpeechRecognition() {
-    if (!window.SpeechRecognition && !window.webkitSpeechRecognition) {
-      return;
-    }
-
-    const OriginalSpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-
-    const SpeechRecognitionWrapper = function(...args) {
-      const recognizer = new OriginalSpeechRecognition(...args);
-      const originalStart = recognizer.start.bind(recognizer);
-
-      recognizer.start = function() {
-        requestMediaPermissions({ audio: true }).then(granted => {
-          if (granted) {
-            originalStart();
-          } else {
-            const errorEvent = new SpeechRecognitionErrorEvent('error');
-            errorEvent.error = 'not-allowed'; // This is the standard error for permission denial.
-            recognizer.dispatchEvent(errorEvent);
-          }
-        });
-      };
-
-      return recognizer;
-    };
-
-    SpeechRecognitionWrapper.prototype = OriginalSpeechRecognition.prototype;
-    SpeechRecognitionWrapper.prototype.constructor = SpeechRecognitionWrapper;
-
-    if (window.SpeechRecognition) {
-      window.SpeechRecognition = SpeechRecognitionWrapper;
-    }
-    if (window.webkitSpeechRecognition) {
-      window.webkitSpeechRecognition = SpeechRecognitionWrapper;
-    }
-  }
-
-  interceptSpeechRecognition();
-
-  window.addEventListener('message', function(event) {
-    if (event.data) {
-      if (event.data.type === 'resolveMediaPermission') {
-        const { promiseId, granted } = event.data;
-        if (pendingMediaResolvers[promiseId]) {
-          pendingMediaResolvers[promiseId](granted);
-        }
-      }
-    }
-  });
-
-})();</script><script ws-interception-config="{&quot;parentOrigin&quot;:&quot;https://gemini.google.com&quot;,&quot;proxiedDomains&quot;:[]}" data-bard-client-injected="true">(function(){'use strict';var u=typeof Object.defineProperties=="function"?Object.defineProperty:function(b,d,e){if(b==Array.prototype||b==Object.prototype)return b;b[d]=e.value;return b};function v(b){b=["object"==typeof globalThis&&globalThis,b,"object"==typeof window&&window,"object"==typeof self&&self,"object"==typeof global&&global];for(var d=0;d<b.length;++d){var e=b[d];if(e&&e.Math==Math)return e}throw Error("Cannot find global object");}var w=v(this);
-function y(b,d){if(d)a:{var e=w;b=b.split(".");for(var h=0;h<b.length-1;h++){var k=b[h];if(!(k in e))break a;e=e[k]}b=b[b.length-1];h=e[b];d=d(h);d!=h&&d!=null&&u(e,b,{configurable:!0,writable:!0,value:d})}}function z(b){function d(h){return b.next(h)}function e(h){return b.throw(h)}return new Promise(function(h,k){function m(n){n.done?h(n.value):Promise.resolve(n.value).then(d,e).then(m,k)}m(b.next())})}y("globalThis",function(b){return b||w});/*
-
- Copyright The Closure Library Authors.
- SPDX-License-Identifier: Apache-2.0
-*/
-function A(b,d){function e(){}e.prototype=d.prototype;b.j=d.prototype;b.prototype=new e;b.prototype.constructor=b;b.h=function(h,k,m){for(var n=Array(arguments.length-2),p=2;p<arguments.length;p++)n[p-2]=arguments[p];return d.prototype[k].apply(h,n)}};function B(b,d,e="*"){function h(a){if(typeof a==="string")return F.encode(a).buffer;if(a instanceof ArrayBuffer)return a.slice(0);if(ArrayBuffer.isView(a))return a.buffer.slice(a.byteOffset,a.byteOffset+a.byteLength);throw Error("Invalid data type");}function k(a){a=h(a);var f={type:"send",data:new Uint8Array(a)},g;(g=r)==null||g.postMessage(f,[a])}function m(){if(!r)throw Error("Data port not captured yet.");r.onmessage=a=>{if(a.data.type==="message"){a=new MessageEvent("message",{data:G.decode(a.data.data)});
-let f;(f=c.onmessage)==null||f.call(c,a);c.dispatchEvent(a)}}}function n(){if(!t)throw Error("Control port not captured yet.");t.onmessage=a=>{switch(a.data.type){case "open":l=1;var f=new Event("open"),g;(g=c.onopen)==null||g.call(c,f);c.dispatchEvent(f);q.forEach(H=>{k(H)});q=[];break;case "close":g=a.data;l=3;g=new CloseEvent("close",{code:g.code,reason:g.reason,wasClean:g.wasClean});(f=c.onclose)==null||f.call(c,g);c.dispatchEvent(g);break;case "error":l=3;f=new Event("error");let x;(x=c.onerror)==
-null||x.call(c,f);c.dispatchEvent(f)}}}function p(a){return z(function*(){var f=new MessageChannel;t=f.port1;var g=new MessageChannel;r=g.port1;n();m();window.parent.postMessage({type:"websocket_open",portOrdering:["control","data"],url:b,protocols:a||[],connectionId:I},e,[f.port2,g.port2])}())}var c=Reflect.construct(EventTarget,[],new.target);c.CONNECTING=0;c.OPEN=1;c.CLOSING=2;c.CLOSED=3;c.url=b;c.binaryType="arraybuffer";c.protocol="";c.i="";var l=0,t=null,r=null,q=[],F=new TextEncoder,G=new TextDecoder;
-c.onopen=null;c.onmessage=null;c.onclose=null;c.onerror=null;Object.defineProperty(c,"readyState",{get:()=>l,enumerable:!0,configurable:!0});Object.defineProperty(c,"bufferedAmount",{get:()=>{var a=0;q.forEach(f=>{a+=typeof f==="string"?f.length:f.byteLength});return a},enumerable:!0,configurable:!0});var I=function(){var a;return((a=globalThis.crypto)==null?0:a.randomUUID)?globalThis.crypto.randomUUID():"xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g,f=>{var g=Math.random()*16|0;return(f===
-"x"?g:g&3|8).toString(16)})}();c.send=a=>{if(l===1)a instanceof Blob?a.arrayBuffer().then(f=>{k(f)}):k(a);else if(l===0)if(typeof a==="string")q.push(a);else if(a instanceof ArrayBuffer||ArrayBuffer.isView(a))q.push(h(a));else throw Error("Sending Blob is not supported before the connection is open.");else console.debug("WebSocket send called in CLOSING or CLOSED state; ignored.")};c.close=(a=1E3,f="")=>{if(l!==2&&l!==3){l=2;a={type:"close",code:a,reason:f,wasClean:a===1E3};var g;(g=t)==null||g.postMessage(a)}};
-Promise.resolve().then(()=>p(d));return c}A(B,EventTarget);var C=document.currentScript,D=C==null?void 0:C.getAttribute("ws-interception-config");if(!D)throw Error("WebSocket Interceptor: Missing ws-interception-config attribute in the script tag.");var E=JSON.parse(D);if(!E.parentOrigin||typeof E.parentOrigin!=="string")throw Error("WebSocket Interceptor: Invalid parentOrigin in ws-interception-config");
-(function(b){var d=Object.getOwnPropertyDescriptor(window,"WebSocket");if(!d||d.writable||d.configurable)d=Object.assign(function(e,h){try{let k=(new URL(e)).hostname;if(b.proxiedDomains.some(m=>k===m||k.endsWith(`.${m}`)))return new B(e,h,b.parentOrigin)}catch(k){throw window.parent.postMessage({type:"websocket_blocked",url:e,reason:"blocked_invalid_url"},b.parentOrigin),new DOMException(`WebSocket connection to '${e}' is not allowed in Canvas.`,"SecurityError");}window.parent.postMessage({type:"websocket_blocked",
-url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMException(`WebSocket connection to '${e}' is not allowed in Canvas.`,"SecurityError");},{CONNECTING:0,OPEN:1,CLOSING:2,CLOSED:3}),Object.defineProperty(window,"WebSocket",{value:d,writable:!1,configurable:!1})})({proxiedDomains:E.proxiedDomains||[],parentOrigin:E.parentOrigin});}).call(this);
-</script><script data-bard-client-injected="true">((function(modelInformation) {
-  const originalFetch = window.fetch;
-  // TODO: b/421908508 - Move these out of the script and match all generative AI model calls.
-  let googleLlmBaseApiUrls = [
-    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.textModelName + ':streamGenerateContent',
-    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.textModelName + ':generateContent',
-    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.imageModelName + ':predict',
-    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.imageModelName + ':predictLongRunning',
-    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.imageEditModelName + ':generateContent',
-    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.imageTransformModelName + ':generateContent',
-    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.videoModelName + ':predict',
-    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.videoModelName + ':predictLongRunning',
-    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.ttsModelName + ':generateContent',
-  ];
-  modelInformation.deprecatedTextModelNames.forEach((modelName) => {
-    googleLlmBaseApiUrls.push(
-      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':streamGenerateContent',
-      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':generateContent',
-    );
-  });
-  modelInformation.deprecatedImageModelNames.forEach((modelName) => {
-    googleLlmBaseApiUrls.push(
-      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':predict',
-      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':predictLongRunning',
-      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':generateContent',
-      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':streamGenerateContent',
-    );
-  });
-  modelInformation.deprecatedGenerateImageModelNames.forEach((modelName) => {
-    googleLlmBaseApiUrls.push(
-      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':generateContent',
-      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':streamGenerateContent',
-    );
-  });
-  modelInformation.deprecatedImageTransformModelNames.forEach((modelName) => {
-    googleLlmBaseApiUrls.push(
-      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':generateContent',
-      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':streamGenerateContent',
-    );
-  });
-
-  const pendingFetchResolvers = {};
-  let nextPromiseId = 0;
-
-  function handleStringInput(input, optionsArgument) {
-    const actualUrl = input;
-    const fetchCallArgs = [actualUrl, optionsArgument];
-    const effectiveOptions = optionsArgument || {};
-    const bodyForApiKeyCheck = effectiveOptions.body;
-    const bodyForPostMessage = effectiveOptions.body;
-    return { actualUrl, fetchCallArgs, effectiveOptions, bodyForApiKeyCheck, bodyForPostMessage };
-  }
-
-  function handleRequestInput(input, optionsArgument) {
-    const actualUrl = input.url;
-    const fetchCallArgs = [input, optionsArgument];
-    const effectiveOptions = { method: input.method, headers: new Headers(input.headers) };
-    let bodyForApiKeyCheck;
-    let bodyForPostMessage;
-
-    if (optionsArgument) {
-      if (optionsArgument.method) effectiveOptions.method = optionsArgument.method;
-      if (optionsArgument.headers) effectiveOptions.headers = new Headers(optionsArgument.headers);
-      if ('body' in optionsArgument) {
-        bodyForApiKeyCheck = optionsArgument.body;
-        bodyForPostMessage = optionsArgument.body;
-      } else {
-        bodyForApiKeyCheck = undefined;
-        bodyForPostMessage = input.body;
-      }
-    } else {
-      bodyForApiKeyCheck = undefined;
-      bodyForPostMessage = input.body;
-    }
-    return { actualUrl, fetchCallArgs, effectiveOptions, bodyForApiKeyCheck, bodyForPostMessage };
-  }
-
-  window.fetch = function(input, optionsArgument) {
-    let actualUrl;
-    let fetchCallArgs;
-    let effectiveOptions = {};
-    let bodyForApiKeyCheck;
-    let bodyForPostMessage;
-
-    if (typeof input === 'string') {
-      ({actualUrl, fetchCallArgs, effectiveOptions, bodyForApiKeyCheck, bodyForPostMessage} = handleStringInput(input, optionsArgument));
-    } else if (input instanceof Request) {
-      ({actualUrl, fetchCallArgs, effectiveOptions, bodyForApiKeyCheck, bodyForPostMessage} = handleRequestInput(input, optionsArgument));
-    } else {
-      return originalFetch.apply(window, [input, optionsArgument]);
-    }
-
-    effectiveOptions.method = effectiveOptions.method || 'GET';
-    if (!effectiveOptions.headers) {
-      effectiveOptions.headers = new Headers();
-    }
-
-
-    if (typeof actualUrl === 'string' && googleLlmBaseApiUrls.some((url) => actualUrl.startsWith(url))) {
-      let apiKeyIsNull = true;
-
-      const regex = new RegExp("models/([^:]+)");
-      const modelNameMatch = actualUrl.match(regex);
-      const modelName = modelNameMatch ? modelNameMatch[1] : 'unspecified';
-
-
-      try {
-        const urlObject = new URL(actualUrl);  // Use URL object for robust parsing
-        const apiKeyParam = urlObject.searchParams.get('key');
-        if (apiKeyParam) {
-          apiKeyIsNull = false;
-        }
-      } catch (e) {
-        // Continue checks even if URL parsing fails
-      }
-
-      if (apiKeyIsNull && effectiveOptions.headers) {
-        const h = new Headers(effectiveOptions.headers);
-        const apiKeyHeaderValue = h.get('X-API-Key') || h.get('x-api-key');
-        if (apiKeyHeaderValue) {
-          apiKeyIsNull = false;
-          return originalFetch.apply(window, fetchCallArgs);
-        }
-      }
-
-      if (apiKeyIsNull && effectiveOptions.method && ['POST', 'PUT', 'PATCH'].includes(effectiveOptions.method.toUpperCase()) && typeof bodyForApiKeyCheck === 'string') {
-        try {
-          const bodyData = JSON.parse(bodyForApiKeyCheck);
-          if (bodyData && bodyData.apiKey) {
-            apiKeyIsNull = false;
-            return originalFetch.apply(window, fetchCallArgs);
-          }
-        } catch (e) {
-          // Ignore JSON parsing errors
-        }
-      }
-
-      if(apiKeyIsNull) {
-        const promiseId = nextPromiseId++;
-        const promise = new Promise((resolve) => {
-          pendingFetchResolvers[promiseId] = (resolvedResponse) => {
-            delete pendingFetchResolvers[promiseId];
-            resolve(resolvedResponse);
-          };
-        });
-
-        let serializedBodyForPostMessage;
-        if (typeof bodyForPostMessage === 'string' || bodyForPostMessage == null) {
-            serializedBodyForPostMessage = bodyForPostMessage;
-        } else if (bodyForPostMessage instanceof ReadableStream) {
-            serializedBodyForPostMessage = null;
-        } else {
-            try {
-                serializedBodyForPostMessage = JSON.stringify(bodyForPostMessage);
-            } catch (e) {
-                serializedBodyForPostMessage = null;
-            }
-        }
-
-        const messageOptions = {
-            method: effectiveOptions.method,
-            headers: Object.fromEntries(new Headers(effectiveOptions.headers).entries()),
-            body: serializedBodyForPostMessage
-        };
-
-        window.parent.postMessage({
-          type: 'requestFetch',
-          url: actualUrl,
-          modelName: modelName,
-          options: messageOptions,
-          promiseId: promiseId,
-        }, '*');
-
-        return promise;
-      }
-      return originalFetch.apply(window, fetchCallArgs);
-    }
-    return originalFetch.apply(window, fetchCallArgs);
-  };
-
-  window.addEventListener('message', function(event) {
-    if (event.data && event.data.type === 'resolveFetch') {
-      const { promiseId, response } = event.data;
-      if (pendingFetchResolvers[promiseId]) {
-        try {
-          const reconstructedResponse = new Response(response.body, {
-            status: response.status,
-            statusText: response.statusText,
-            headers: new Headers(response.headers),
-          });
-          pendingFetchResolvers[promiseId](reconstructedResponse);
-        } catch (error) {
-          pendingFetchResolvers[promiseId](new Response(null, { status: 500, statusText: "Interceptor Response Reconstruction Error" }));
-        }
-      }
-    }
-  });
-
-}))({"textModelName":"gemini-3-flash-preview","imageModelName":"imagen-4.0-generate-001","imageEditModelName":"gemini-3.1-flash-image","imageTransformModelName":"gemini-3-pro-image","videoModelName":"veo-2.0-generate-001","ttsModelName":"gemini-2.5-flash-preview-tts","deprecatedTextModelNames":["gemini-2.0-flash","gemini-2.5-flash","gemini-2.5-flash-preview-04-17","gemini-2.5-flash-preview-05-20","gemini-2.5-flash-preview-09-2025"],"deprecatedImageModelNames":["imagen-3.0-generate-001","imagen-3.0-generate-002"],"deprecatedGenerateImageModelNames":["gemini-2.5-flash-image-preview","gemini-2.5-flash-image","gemini-3.1-flash-image-preview"],"deprecatedImageTransformModelNames":["gemini-3-pro-image-preview-11-2025"]})</script><script data-bard-client-injected="true">(function() {
-  function normalizeSlug(str) {
-    try {
-      return str
-        .trim()
-        .toLowerCase()
-        .replace(/[^p{L}p{N}s_-]/gu, '')
-        .replace(/s+/g, '-');
-    } catch (e) {
-      return str
-        .trim()
-        .toLowerCase()
-        .replace(/[^a-z0-9s_-]/g, '')
-        .replace(/s+/g, '-');
-    }
-  }
-
-  function findTargetElement(hash) {
-    if (!hash || hash === '#') {
-      return null;
-    }
-    const rawId = hash.startsWith('#') ? hash.slice(1) : hash;
-    let decodedId = rawId;
-    try {
-      decodedId = decodeURIComponent(rawId);
-    } catch (e) {
-      // Ignore URI malformed errors.
-    }
-
-    // 1. Direct ID match (raw and decoded).
-    let target = document.getElementById(rawId) || document.getElementById(decodedId);
-    if (target) {
-      return target;
-    }
-
-    // 2. Name attribute match (<a name="...">).
-    try {
-      if (typeof CSS !== 'undefined' && CSS.escape) {
-        target =
-          document.querySelector('[name="' + CSS.escape(rawId) + '"]') ||
-          document.querySelector('[name="' + CSS.escape(decodedId) + '"]');
-      } else {
-        const namedElements = document.getElementsByName(rawId);
-        if (namedElements && namedElements.length > 0) {
-          return namedElements[0];
-        }
-      }
-    } catch (e) {
-      // Ignore querySelector syntax errors.
-    }
-    if (target) {
-      return target;
-    }
-
-    // 3. Match heading text by slug (for Markdown TOCs where headings lack explicit IDs).
-    const targetSlug = normalizeSlug(decodedId);
-    if (targetSlug) {
-      for (const heading of document.querySelectorAll('h1, h2, h3, h4, h5, h6')) {
-        if (normalizeSlug(heading.textContent || '') === targetSlug) {
-          return heading;
-        }
-      }
-    }
-
-    return null;
-  }
-
-  document.addEventListener('click', function(event) {
-    const target = event.target;
-    const anchor = target && typeof target.closest === 'function' ? target.closest('a') : null;
-    if (!anchor) {
-      return;
-    }
-
-    const href = anchor.getAttribute('href');
-    if (
-      !href ||
-      href.trim().toLowerCase().startsWith('javascript:') ||
-      anchor.hasAttribute('download')
-    ) {
-      return;
-    }
-
-    // Check if the link is an in-page hash / anchor link.
-    if (href.startsWith('#')) {
-      event.preventDefault();
-      const targetElement = findTargetElement(href);
-      if (targetElement) {
-        targetElement.scrollIntoView({behavior: 'smooth', block: 'start'});
-      }
-      return;
-    }
-
-    // Check if the URL has the same origin/pathname but with a hash.
-    try {
-      const url = new URL(anchor.href, window.location.href);
-      if (
-        url.hash &&
-        url.origin === window.location.origin &&
-        url.pathname === window.location.pathname
-      ) {
-        event.preventDefault();
-        const targetElement = findTargetElement(url.hash);
-        if (targetElement) {
-          targetElement.scrollIntoView({behavior: 'smooth', block: 'start'});
-        }
-        return;
-      }
-    } catch (e) {
-      // Fall through if URL parsing fails.
-    }
-
-    // For all external or full navigation links, prevent iframe-level navigation
-    // (which breaks in AGSA WebView or sandboxed iframes) and ensure they open
-    // safely in a new tab/window.
-    if (anchor.target !== '_blank') {
-      event.preventDefault();
-      window.open(anchor.href, '_blank', 'noopener,noreferrer');
-    }
-  }, {capture: true});
-})();</script><script data-bard-client-injected="true">(function(){'use strict';function a(){window.parent.postMessage({type:"interaction"},"*")}window.addEventListener("click",a,{capture:!0,passive:!0});window.addEventListener("touchstart",a,{capture:!0,passive:!0});window.addEventListener("keydown",a,{capture:!0,passive:!0});}).call(this);
-</script><script data-bard-client-injected="true">(function() {
-  const originalConsoleLog = console.log;
-  const originalConsoleError = console.error;
-
-    /**
-   * Normalizes an error event or a promise rejection reason into a structured error object.
-   * @param {*} errorEventOrReason The error object or reason.
-   * @return {object} Structured error data { message, name, stack }.
-   */
-  function getErrorObject(errorEventOrReason) {
-    if (errorEventOrReason instanceof Error) {
-      return {
-        message: errorEventOrReason.message,
-        name: errorEventOrReason.name,
-        stack: errorEventOrReason.stack,
-      };
-    }
-    // Fallback for non-Error objects.
-    try {
-      return {
-        message: JSON.stringify(errorEventOrReason),
-        name: 'UnknownErrorType',
-        stack: null,
-      };
-    } catch (e) {
-      return {
-        message: String(errorEventOrReason),
-        name: 'UnknownErrorTypeNonStringifiable',
-        stack: null,
-      };
-    }
-  }
-
-  /**
-   * Converts an array of arguments (from log/error) into a single string.
-   * Handles Error objects specially to include their message and stack.
-   * @param {Array<*>} args - Arguments passed to console methods.
-   * @return {string} A string representation of the arguments.
-   */
-  function stringifyArgs(args) {
-    return args
-      .map((arg) => {
-        if (arg instanceof Error) {
-          const {message, stack} = arg;
-          return `Error: ${message}${stack ? ('\nStack: ' + stack) : ''}`;
-        }
-        if (typeof arg === 'object' && arg !== null) {
-          try {
-            return JSON.stringify(arg);
-          } catch (error) {
-            return '[Circular Object]';
-          }
-        } else {
-          return String(arg);
-        }
-      })
-      .join(' ');
-  }
-
-  console.log = function(...args) {
-    const logString = stringifyArgs(args);
-    window.parent.postMessage({ type: 'log', message: logString }, '*');
-    originalConsoleLog.apply(console, args);
-  };
-
-  console.error = function(...args) {
-    let errorData;
-    if (args.length > 0 && args[0] instanceof Error) {
-      const err = args[0];
-      // If the first arg is an Error, capture its details.
-      errorData = {
-        type: 'error',
-        source: 'CONSOLE_ERROR',
-        ...getErrorObject(err),
-        rawArgsString: stringifyArgs(args.slice(1)),
-        timestamp: new Date().toISOString(),
-      };
-    } else {
-      // If not an Error object, treat all args as a general error message.
-      errorData = {
-        type: 'error',
-        source: 'CONSOLE_ERROR',
-        message: stringifyArgs(args),
-        name: 'ConsoleLoggedError',
-        stack: null,
-        timestamp: new Date().toISOString(),
-      };
-    }
-    window.parent.postMessage(errorData, '*');
-    originalConsoleError.apply(console, args);
-  };
-
-  // Listen for global unhandled synchronous errors.
-  window.addEventListener('error', function(event) {
-    const errorDetails = event.error ? getErrorObject(event.error) : {
-      message: event.message,
-      name: 'GlobalError',
-      stack: null,
-      filename: event.filename,
-      lineno: event.lineno,
-      colno: event.colno,
-    };
-
-    window.parent.postMessage({
-      type: 'error',
-      source: 'global',
-      ...errorDetails,
-      message: errorDetails.message || event.message,
-      timestamp: new Date().toISOString(),
-    }, '*');
-  });
-
-  // Listen for unhandled promise rejections (asynchronous errors).
-  window.addEventListener('unhandledrejection', function(event) {
-    const errorDetails = getErrorObject(event.reason);
-
-    window.parent.postMessage({
-      type: 'error',
-      source: 'unhandledrejection',
-      ...errorDetails,
-      message: errorDetails.message || 'Unhandled Promise Rejection',
-      timestamp: new Date().toISOString(),
-    }, '*');
-  });
-
-})();</script>
+<html lang="it">
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NaturaSì Badge Studio | Generatore Tessera CR80</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Libreria QR Code UTF-8 Vettoriale -->
-    <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js" crossorigin="anonymous"></script>
-    <!-- Libreria JSZip per pacchetto GitHub -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
     <!-- Google Font Jost come fallback geometrico identico a Futura -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
-    <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
     <style>
         /* Caricamento Font Locali Futura BT */
@@ -810,10 +86,10 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
 
         /* Contenitore doppio badge pieghevole */
         .badge-foldable {
+            position: relative;
             width: 86mm;
             height: 108mm;
-            border: 0.2mm dashed #cbd5e1;
-            box-sizing: border-box;
+            outline: 0.15mm dashed #cbd5e1;
             overflow: hidden;
             display: flex;
             flex-direction: column;
@@ -830,12 +106,16 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
             flex-shrink: 0;
         }
 
-        /* Sottile linea di piegatura centrale */
+        /* Sottile linea di piegatura centrale posizionata esattamente a 54.00mm senza alterare le altezze */
         .fold-line {
+            position: absolute;
+            top: 54mm;
+            left: 0;
             width: 100%;
             height: 0;
-            border-top: 0.25mm dashed #64748b;
-            position: relative;
+            border-top: 0.2mm dashed #64748b;
+            transform: translateY(-0.1mm);
+            pointer-events: none;
             z-index: 25;
         }
 
@@ -911,7 +191,7 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
             background: #475569;
         }
     </style>
-<style>*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/* ! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com */*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.pointer-events-none{pointer-events:none}.fixed{position:fixed}.absolute{position:absolute}.relative{position:relative}.inset-0{inset:0px}.inset-y-0{top:0px;bottom:0px}.bottom-5{bottom:1.25rem}.right-0{right:0px}.right-5{right:1.25rem}.z-50{z-index:50}.mb-0\.5{margin-bottom:0.125rem}.mb-1{margin-bottom:0.25rem}.mb-2{margin-bottom:0.5rem}.mb-4{margin-bottom:1rem}.mt-0\.5{margin-top:0.125rem}.block{display:block}.inline-block{display:inline-block}.flex{display:flex}.grid{display:grid}.hidden{display:none}.h-11{height:2.75rem}.h-2{height:0.5rem}.h-3{height:0.75rem}.h-4{height:1rem}.h-5{height:1.25rem}.h-7{height:1.75rem}.h-full{height:100%}.min-h-screen{min-height:100vh}.w-12{width:3rem}.w-2{width:0.5rem}.w-3{width:0.75rem}.w-4{width:1rem}.w-5{width:1.25rem}.w-7{width:1.75rem}.w-9{width:2.25rem}.w-full{width:100%}.max-w-\[210mm\]{max-width:210mm}.max-w-md{max-width:28rem}.flex-1{flex:1 1 0%}.flex-shrink-0{flex-shrink:0}.cursor-grab{cursor:grab}.cursor-pointer{cursor:pointer}.select-none{-webkit-user-select:none;user-select:none}.appearance-none{-webkit-appearance:none;appearance:none}.grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}.flex-col{flex-direction:column}.items-start{align-items:flex-start}.items-center{align-items:center}.justify-start{justify-content:flex-start}.justify-end{justify-content:flex-end}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.gap-1{gap:0.25rem}.gap-1\.5{gap:0.375rem}.gap-2{gap:0.5rem}.gap-2\.5{gap:0.625rem}.gap-3{gap:0.75rem}.space-y-2 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.5rem * var(--tw-space-y-reverse))}.space-y-2\.5 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.625rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.625rem * var(--tw-space-y-reverse))}.space-y-3 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.75rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.75rem * var(--tw-space-y-reverse))}.space-y-4 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1rem * var(--tw-space-y-reverse))}.space-y-5 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1.25rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1.25rem * var(--tw-space-y-reverse))}.overflow-auto{overflow:auto}.overflow-hidden{overflow:hidden}.truncate{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.whitespace-nowrap{white-space:nowrap}.rounded-2xl{border-radius:1rem}.rounded-full{border-radius:9999px}.rounded-lg{border-radius:0.5rem}.rounded-md{border-radius:0.375rem}.rounded-xl{border-radius:0.75rem}.border{border-width:1px}.border-2{border-width:2px}.border-b{border-bottom-width:1px}.border-t{border-top-width:1px}.border-dashed{border-style:dashed}.border-\[\#007A33\]{--tw-border-opacity:1;border-color:rgb(0 122 51 / var(--tw-border-opacity, 1))}.border-\[\#84cc16\]{--tw-border-opacity:1;border-color:rgb(132 204 22 / var(--tw-border-opacity, 1))}.border-emerald-500\/50{border-color:rgb(16 185 129 / 0.5)}.border-emerald-800\/60{border-color:rgb(6 95 70 / 0.6)}.border-slate-600{--tw-border-opacity:1;border-color:rgb(71 85 105 / var(--tw-border-opacity, 1))}.border-slate-700{--tw-border-opacity:1;border-color:rgb(51 65 85 / var(--tw-border-opacity, 1))}.border-slate-800{--tw-border-opacity:1;border-color:rgb(30 41 59 / var(--tw-border-opacity, 1))}.bg-\[\#007A33\]{--tw-bg-opacity:1;background-color:rgb(0 122 51 / var(--tw-bg-opacity, 1))}.bg-\[\#007A33\]\/15{background-color:rgb(0 122 51 / 0.15)}.bg-\[\#84cc16\]{--tw-bg-opacity:1;background-color:rgb(132 204 22 / var(--tw-bg-opacity, 1))}.bg-black\/80{background-color:rgb(0 0 0 / 0.8)}.bg-emerald-950{--tw-bg-opacity:1;background-color:rgb(2 44 34 / var(--tw-bg-opacity, 1))}.bg-slate-700{--tw-bg-opacity:1;background-color:rgb(51 65 85 / var(--tw-bg-opacity, 1))}.bg-slate-800{--tw-bg-opacity:1;background-color:rgb(30 41 59 / var(--tw-bg-opacity, 1))}.bg-slate-800\/40{background-color:rgb(30 41 59 / 0.4)}.bg-slate-800\/60{background-color:rgb(30 41 59 / 0.6)}.bg-slate-900{--tw-bg-opacity:1;background-color:rgb(15 23 42 / var(--tw-bg-opacity, 1))}.bg-slate-900\/90{background-color:rgb(15 23 42 / 0.9)}.bg-slate-950{--tw-bg-opacity:1;background-color:rgb(2 6 23 / var(--tw-bg-opacity, 1))}.object-cover{object-fit:cover}.p-1{padding:0.25rem}.p-1\.5{padding:0.375rem}.p-2\.5{padding:0.625rem}.p-3\.5{padding:0.875rem}.p-4{padding:1rem}.p-5{padding:1.25rem}.px-2\.5{padding-left:0.625rem;padding-right:0.625rem}.px-3{padding-left:0.75rem;padding-right:0.75rem}.px-4{padding-left:1rem;padding-right:1rem}.px-5{padding-left:1.25rem;padding-right:1.25rem}.py-1{padding-top:0.25rem;padding-bottom:0.25rem}.py-1\.5{padding-top:0.375rem;padding-bottom:0.375rem}.py-2{padding-top:0.5rem;padding-bottom:0.5rem}.py-2\.5{padding-top:0.625rem;padding-bottom:0.625rem}.py-3{padding-top:0.75rem;padding-bottom:0.75rem}.pb-3{padding-bottom:0.75rem}.pb-4{padding-bottom:1rem}.pr-8{padding-right:2rem}.pt-1{padding-top:0.25rem}.pt-2{padding-top:0.5rem}.text-left{text-align:left}.text-center{text-align:center}.text-\[10px\]{font-size:10px}.text-\[11px\]{font-size:11px}.text-base{font-size:1rem;line-height:1.5rem}.text-sm{font-size:0.875rem;line-height:1.25rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.text-xs{font-size:0.75rem;line-height:1rem}.font-bold{font-weight:700}.font-normal{font-weight:400}.font-semibold{font-weight:600}.uppercase{text-transform:uppercase}.lowercase{text-transform:lowercase}.leading-relaxed{line-height:1.625}.tracking-tight{letter-spacing:-0.025em}.tracking-wider{letter-spacing:0.05em}.tracking-widest{letter-spacing:0.1em}.text-\[\#84cc16\]{--tw-text-opacity:1;color:rgb(132 204 22 / var(--tw-text-opacity, 1))}.text-emerald-300{--tw-text-opacity:1;color:rgb(110 231 183 / var(--tw-text-opacity, 1))}.text-emerald-400{--tw-text-opacity:1;color:rgb(52 211 153 / var(--tw-text-opacity, 1))}.text-slate-200{--tw-text-opacity:1;color:rgb(226 232 240 / var(--tw-text-opacity, 1))}.text-slate-300{--tw-text-opacity:1;color:rgb(203 213 225 / var(--tw-text-opacity, 1))}.text-slate-400{--tw-text-opacity:1;color:rgb(148 163 184 / var(--tw-text-opacity, 1))}.text-slate-500{--tw-text-opacity:1;color:rgb(100 116 139 / var(--tw-text-opacity, 1))}.text-white{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.placeholder-slate-500::placeholder{--tw-placeholder-opacity:1;color:rgb(100 116 139 / var(--tw-placeholder-opacity, 1))}.accent-\[\#84cc16\]{accent-color:#84cc16}.shadow-2xl{--tw-shadow:0 25px 50px -12px rgb(0 0 0 / 0.25);--tw-shadow-colored:0 25px 50px -12px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-lg{--tw-shadow:0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-xl{--tw-shadow:0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 20px 25px -5px var(--tw-shadow-color), 0 8px 10px -6px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-emerald-950\/50{--tw-shadow-color:rgb(2 44 34 / 0.5);--tw-shadow:var(--tw-shadow-colored)}.backdrop-blur-sm{--tw-backdrop-blur:blur(4px);-webkit-backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)}.transition{transition-property:color, background-color, border-color, fill, stroke, opacity, box-shadow, transform, filter, -webkit-text-decoration-color, -webkit-backdrop-filter;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter, -webkit-text-decoration-color, -webkit-backdrop-filter;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.file\:mr-2::file-selector-button{margin-right:0.5rem}.file\:rounded-lg::file-selector-button{border-radius:0.5rem}.file\:border-0::file-selector-button{border-width:0px}.file\:bg-\[\#007A33\]::file-selector-button{--tw-bg-opacity:1;background-color:rgb(0 122 51 / var(--tw-bg-opacity, 1))}.file\:bg-slate-700::file-selector-button{--tw-bg-opacity:1;background-color:rgb(51 65 85 / var(--tw-bg-opacity, 1))}.file\:px-2\.5::file-selector-button{padding-left:0.625rem;padding-right:0.625rem}.file\:py-1::file-selector-button{padding-top:0.25rem;padding-bottom:0.25rem}.file\:font-semibold::file-selector-button{font-weight:600}.file\:text-white::file-selector-button{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.hover\:border-\[\#84cc16\]:hover{--tw-border-opacity:1;border-color:rgb(132 204 22 / var(--tw-border-opacity, 1))}.hover\:border-slate-500:hover{--tw-border-opacity:1;border-color:rgb(100 116 139 / var(--tw-border-opacity, 1))}.hover\:bg-emerald-700:hover{--tw-bg-opacity:1;background-color:rgb(4 120 87 / var(--tw-bg-opacity, 1))}.hover\:bg-rose-600:hover{--tw-bg-opacity:1;background-color:rgb(225 29 72 / var(--tw-bg-opacity, 1))}.hover\:bg-slate-700:hover{--tw-bg-opacity:1;background-color:rgb(51 65 85 / var(--tw-bg-opacity, 1))}.hover\:text-white:hover{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.focus\:border-\[\#84cc16\]:focus{--tw-border-opacity:1;border-color:rgb(132 204 22 / var(--tw-border-opacity, 1))}.focus\:outline-none:focus{outline:2px solid transparent;outline-offset:2px}.active\:scale-\[0\.99\]:active{--tw-scale-x:0.99;--tw-scale-y:0.99;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.active\:cursor-grabbing:active{cursor:grabbing}@media (min-width: 640px){.sm\:flex-row{flex-direction:row}.sm\:items-center{align-items:center}.sm\:p-6{padding:1.5rem}.sm\:p-8{padding:2rem}}@media (min-width: 1024px){.lg\:h-screen{height:100vh}.lg\:w-\[440px\]{width:440px}.lg\:flex-row{flex-direction:row}.lg\:overflow-y-auto{overflow-y:auto}.lg\:border-b-0{border-bottom-width:0px}.lg\:border-r{border-right-width:1px}}@media (min-width: 1280px){.xl\:w-\[470px\]{width:470px}}</style></head>
+</head>
 <body class="min-h-screen flex flex-col lg:flex-row">
 
     <!-- PANNELLO DI CONTROLLO SINISTRO (Nascosto in stampa) -->
@@ -938,7 +218,7 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
         <!-- 1. SELEZIONE AZIENDA DEL GRUPPO -->
         <div>
             <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-2">
-                1. Società del Gruppo (Intestazione &amp; Dati Legali)
+                1. Società del Gruppo (Intestazione & Dati Legali)
             </label>
             <div class="grid grid-cols-2 gap-2" id="companyGrid">
                 <button type="button" data-company="ecornaturasi" class="company-btn text-left p-2.5 rounded-xl border-2 border-[#007A33] bg-[#007A33]/15 transition cursor-pointer">
@@ -969,7 +249,7 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
                 <input type="file" id="photoInput" accept="image/*" class="hidden">
                 <div id="photoEmptyState" class="flex flex-col items-center justify-center py-1">
                     <svg class="w-7 h-7 text-slate-400 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                     </svg>
                     <span class="text-xs font-semibold text-slate-200">Carica o trascina una foto</span>
                     <span class="text-[10px] text-slate-400">Si aprirà lo strumento moderno di ritaglio</span>
@@ -1001,13 +281,15 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
                     <label for="nomeInput" class="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">
                         Nome (in evidenza)
                     </label>
-                    <input type="text" id="nomeInput" placeholder="Es. Massimo" autocomplete="off" class="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-sm placeholder-slate-500 focus:outline-none focus:border-[#84cc16] transition">
+                    <input type="text" id="nomeInput" placeholder="Es. Massimo" autocomplete="off"
+                        class="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-sm placeholder-slate-500 focus:outline-none focus:border-[#84cc16] transition">
                 </div>
                 <div>
                     <label for="cognomeInput" class="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">
                         Cognome
                     </label>
-                    <input type="text" id="cognomeInput" placeholder="Es. Maggipinto" autocomplete="off" class="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-sm placeholder-slate-500 focus:outline-none focus:border-[#84cc16] transition">
+                    <input type="text" id="cognomeInput" placeholder="Es. Maggipinto" autocomplete="off"
+                        class="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-sm placeholder-slate-500 focus:outline-none focus:border-[#84cc16] transition">
                 </div>
             </div>
 
@@ -1017,10 +299,11 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
                     Ruolo / Business Unit (Colore dedicato)
                 </label>
                 <div class="relative">
-                    <select id="ruoloSelect" class="w-full px-3 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white text-sm focus:outline-none focus:border-[#84cc16] transition appearance-none pr-8">
+                    <select id="ruoloSelect"
+                        class="w-full px-3 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white text-sm focus:outline-none focus:border-[#84cc16] transition appearance-none pr-8">
                         <option value="">-- Seleziona Ruolo o B.U. --</option>
                         <optgroup label="Business Unit Sede">
-                            <option value="B.U. Grocery &amp; Relex Store Planner">B.U. Grocery &amp; Relex Store Planner (Viola Indaco)</option>
+                            <option value="B.U. Grocery & Relex Store Planner">B.U. Grocery &amp; Relex Store Planner (Viola Indaco)</option>
                             <option value="B.U. Cosmesi ed Erboristeria">B.U. Cosmesi ed Erboristeria (Magenta Botanico)</option>
                             <option value="B.U. Grocery">B.U. Grocery (Ambra Dorata)</option>
                             <option value="B.U. Freschi">B.U. Freschi (Azzurro Ghiaccio)</option>
@@ -1028,7 +311,7 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
                             <option value="B.U. Somministrazione">B.U. Somministrazione (Terracotta Caldo)</option>
                             <option value="B.U.">B.U. (Verde NaturaSì)</option>
                         </optgroup>
-                        <optgroup label="Punto Vendita &amp; Supermercati Bio">
+                        <optgroup label="Punto Vendita & Supermercati Bio">
                             <option value="Store Manager">Store Manager</option>
                             <option value="Vice Store Manager">Vice Store Manager</option>
                             <option value="Addetto Vendite">Addetto Vendite</option>
@@ -1040,7 +323,7 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
                         </optgroup>
                     </select>
                     <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2.5 text-slate-400">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                     </div>
                 </div>
             </div>
@@ -1051,13 +334,15 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
                     <label for="matricolaInput" class="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">
                         Matricola <span class="font-normal lowercase text-slate-500">(nella busta paga)</span>
                     </label>
-                    <input type="text" id="matricolaInput" placeholder="Es. 001234" autocomplete="off" class="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-sm placeholder-slate-500 focus:outline-none focus:border-[#84cc16] transition">
+                    <input type="text" id="matricolaInput" placeholder="Es. 001234" autocomplete="off"
+                        class="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-sm placeholder-slate-500 focus:outline-none focus:border-[#84cc16] transition">
                 </div>
                 <div>
                     <label for="telefonoInput" class="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">
                         Telefono <span class="font-normal lowercase text-emerald-400">(+39 auto)</span>
                     </label>
-                    <input type="tel" id="telefonoInput" placeholder="Es. 340 1234567" autocomplete="off" class="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-sm placeholder-slate-500 focus:outline-none focus:border-[#84cc16] transition">
+                    <input type="tel" id="telefonoInput" placeholder="Es. 340 1234567" autocomplete="off"
+                        class="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-sm placeholder-slate-500 focus:outline-none focus:border-[#84cc16] transition">
                 </div>
             </div>
 
@@ -1067,57 +352,28 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
                     <label for="nascitaInput" class="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">
                         Data di nascita
                     </label>
-                    <input type="date" id="nascitaInput" class="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-sm focus:outline-none focus:border-[#84cc16] transition">
+                    <input type="date" id="nascitaInput"
+                        class="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-sm focus:outline-none focus:border-[#84cc16] transition">
                 </div>
                 <div>
                     <label for="assunzioneInput" class="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">
                         Data di assunzione
                     </label>
-                    <input type="date" id="assunzioneInput" class="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-sm focus:outline-none focus:border-[#84cc16] transition">
+                    <input type="date" id="assunzioneInput"
+                        class="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-sm focus:outline-none focus:border-[#84cc16] transition">
                 </div>
             </div>
         </div>
 
         <!-- PULSANTI AZIONE PRINCIPALI -->
         <div class="pt-2 space-y-2.5">
-            <button type="button" onclick="window.print()" class="w-full py-3 px-4 rounded-xl bg-[#007A33] hover:bg-emerald-700 active:scale-[0.99] text-white font-bold text-sm shadow-lg shadow-emerald-950/50 flex items-center justify-center gap-2 transition cursor-pointer">
+            <button type="button" onclick="window.print()"
+                class="w-full py-3 px-4 rounded-xl bg-[#007A33] hover:bg-emerald-700 active:scale-[0.99] text-white font-bold text-sm shadow-lg shadow-emerald-950/50 flex items-center justify-center gap-2 transition cursor-pointer">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/>
                 </svg>
                 <span>Stampa / Salva PDF A4</span>
             </button>
-
-            <button type="button" id="downloadZipBtn" class="w-full py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 font-semibold text-xs flex items-center justify-center gap-2 transition cursor-pointer">
-                <svg class="w-4 h-4 text-[#84cc16]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
-                </svg>
-                <span>Scarica Pacchetto ZIP per GitHub (nsibadge)</span>
-            </button>
-        </div>
-
-        <!-- SEZIONE CARICAMENTO LOGHI UFFICIALI E FONT (Per anteprima qui e inclusione nello ZIP) -->
-        <div class="bg-slate-800/60 border border-slate-700 rounded-xl p-3.5 text-xs space-y-2.5">
-            <div class="font-bold text-white flex items-center justify-between">
-                <span>Loghi Ufficiali &amp; Font (.png / .ttf)</span>
-                <span class="text-[10px] font-normal text-emerald-400">Solo file ufficiali</span>
-            </div>
-            <p class="text-[11px] text-slate-400 leading-relaxed">
-                Su GitHub (<code class="text-emerald-300">nsibadge</code>) vengono caricati in automatico dalla cartella principale (attenzione alle maiuscole/minuscole: <code class="text-slate-200">Logo-bianco.png</code> e <code class="text-slate-200">lemniscata.png</code>). Per vederli subito in questa anteprima o includerli nello ZIP, selezionali qui:
-            </p>
-            <div class="space-y-2 pt-1">
-                <div>
-                    <label class="block text-[10px] font-semibold text-slate-300 mb-0.5">1. Logo Bianco Ufficiale (Logo-bianco.png)</label>
-                    <input type="file" id="assetLogoBianco" accept="image/png,image/*" class="w-full text-[11px] text-slate-300 file:mr-2 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:bg-[#007A33] file:text-white file:font-semibold cursor-pointer">
-                </div>
-                <div>
-                    <label class="block text-[10px] font-semibold text-slate-300 mb-0.5">2. Lemniscata Ufficiale (lemniscata.png)</label>
-                    <input type="file" id="assetLemniscata" accept="image/png,image/*" class="w-full text-[11px] text-slate-300 file:mr-2 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:bg-[#007A33] file:text-white file:font-semibold cursor-pointer">
-                </div>
-                <div>
-                    <label class="block text-[10px] font-semibold text-slate-300 mb-0.5">3. Font Futura BT (futura-md-bt-medium.ttf / futura-bold-bt.ttf)</label>
-                    <input type="file" id="assetFonts" accept=".ttf" multiple="" class="w-full text-[11px] text-slate-300 file:mr-2 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:bg-slate-700 file:text-white cursor-pointer">
-                </div>
-            </div>
         </div>
     </aside>
 
@@ -1174,20 +430,18 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
                         
                         <!-- Lemniscata ufficiale di sfondo tra il bianco e il colore della B.U. -->
                         <div style="position: absolute; right: -4mm; bottom: -5mm; width: 46mm; height: 46mm; opacity: 0.34; pointer-events: none; z-index: 1;">
-                            <img id="lemniscataImg" src="lemniscata.png" alt="Lemniscata NaturaSì" style="width: 100%; height: 100%; object-fit: contain; display: block;" onerror="if(!this.dataset.triedAlt){this.dataset.triedAlt='1';this.src='lemniscata_2.png';}else{this.style.display='none';document.getElementById('lemniscataMissingHint').style.display='flex';}">
-                            <div id="lemniscataMissingHint" class="no-print" style="display: none; width: 100%; height: 100%; align-items: center; justify-content: center; border: 0.25mm dashed rgb(148, 163, 184); border-radius: 3mm; color: rgb(100, 116, 139); font-size: 5.5pt; text-align: center; padding: 2mm;">
-                                Carica lemniscata.png<br>dal pannello a sinistra
-                            </div>
+                            <img id="lemniscataImg" src="lemniscata.png" alt="Lemniscata NaturaSì" style="width: 100%; height: 100%; object-fit: contain;"
+                                onerror="if(!this.dataset.triedAlt){this.dataset.triedAlt='1';this.src='lemniscata_2.png';}else{this.style.display='none';}">
                         </div>
 
                         <!-- Fascia Superiore Verde Istituzionale con Logo Bianco Ufficiale -->
                         <div style="height: 11.5mm; background-color: #007A33; padding: 0 4.5mm; display: flex; align-items: center; justify-content: space-between; position: relative; z-index: 5; flex-shrink: 0;">
-                            <span id="frontCompanyTag" style="font-size: 6.5pt; font-weight: 700; color: rgba(255,255,255,0.88); letter-spacing: 0.7px; text-transform: uppercase;">EcorNaturaSì</span>
+                            <span id="frontCompanyTag" style="font-size: 6.5pt; font-weight: 700; color: rgba(255,255,255,0.88); letter-spacing: 0.7px; text-transform: uppercase;">
+                                EcorNaturaSì
+                            </span>
                             <div style="height: 7.5mm; display: flex; align-items: center;">
-                                <img id="logoBiancoImg" src="Logo-bianco.png" alt="NaturaSì" style="height: 7.5mm; width: auto; object-fit: contain; display: block;" onerror="if(!this.dataset.triedAlt){this.dataset.triedAlt='1';this.src='Logo-bianco_2.png';}else{this.style.display='none';document.getElementById('logoBiancoMissingHint').style.display='flex';}">
-                                <div id="logoBiancoMissingHint" class="no-print" style="display: none; height: 6.5mm; padding: 0px 2mm; align-items: center; justify-content: center; border: 0.25mm dashed rgba(255, 255, 255, 0.65); border-radius: 1.5mm; color: rgba(255, 255, 255, 0.9); font-size: 5.5pt; white-space: nowrap;">
-                                    Carica Logo-bianco.png
-                                </div>
+                                <img id="logoBiancoImg" src="Logo-bianco.png" alt="NaturaSì" style="height: 7.5mm; width: auto; object-fit: contain;"
+                                    onerror="if(!this.dataset.triedAlt){this.dataset.triedAlt='1';this.src='Logo-bianco_2.png';}else{this.style.display='none';}">
                             </div>
                         </div>
 
@@ -1197,8 +451,8 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
                             <!-- Riquadro Fotografia -->
                             <div style="width: 21mm; height: 28.5mm; border-radius: 2.2mm; overflow: hidden; background: #f1f5f9; border: 0.35mm solid rgba(0, 122, 51, 0.25); box-shadow: 0 2px 6px rgba(0,0,0,0.08); flex-shrink: 0; display: flex; align-items: center; justify-content: center;">
                                 <img id="badgePhotoOut" src="" alt="" style="display: none; width: 100%; height: 100%; object-fit: cover;">
-                                <svg id="badgePhotoPlaceholder" viewBox="0 0 24 24" style="width: 11mm; height: 11mm; color: rgb(148, 163, 184); display: block;" fill="currentColor">
-                                    <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"></path>
+                                <svg id="badgePhotoPlaceholder" viewBox="0 0 24 24" style="width: 11mm; height: 11mm; color: #94a3b8;" fill="currentColor">
+                                    <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/>
                                 </svg>
                             </div>
 
@@ -1211,7 +465,8 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
 
                             <!-- QR Code vCard Rubrica (protetto con margine bianco) -->
                             <div style="width: 21.5mm; flex-shrink: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                                <div id="qrCodeBox" style="width: 20.5mm; height: 20.5mm; background: #ffffff; padding: 1.2mm; border-radius: 2mm; border: 0.25mm solid rgba(0, 122, 51, 0.22); box-shadow: 0 2px 5px rgba(0,0,0,0.06); display: flex; align-items: center; justify-content: center; box-sizing: border-box;"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 90 90" preserveAspectRatio="xMinYMin meet" style="width: 100%; height: 100%; display: block;"><rect width="100%" height="100%" fill="white" cx="0" cy="0"></rect><path d="M0,0l2,0 0,2 -2,0 0,-2z M2,0l2,0 0,2 -2,0 0,-2z M4,0l2,0 0,2 -2,0 0,-2z M6,0l2,0 0,2 -2,0 0,-2z M8,0l2,0 0,2 -2,0 0,-2z M10,0l2,0 0,2 -2,0 0,-2z M12,0l2,0 0,2 -2,0 0,-2z M16,0l2,0 0,2 -2,0 0,-2z M18,0l2,0 0,2 -2,0 0,-2z M22,0l2,0 0,2 -2,0 0,-2z M26,0l2,0 0,2 -2,0 0,-2z M28,0l2,0 0,2 -2,0 0,-2z M30,0l2,0 0,2 -2,0 0,-2z M32,0l2,0 0,2 -2,0 0,-2z M34,0l2,0 0,2 -2,0 0,-2z M40,0l2,0 0,2 -2,0 0,-2z M42,0l2,0 0,2 -2,0 0,-2z M46,0l2,0 0,2 -2,0 0,-2z M48,0l2,0 0,2 -2,0 0,-2z M50,0l2,0 0,2 -2,0 0,-2z M52,0l2,0 0,2 -2,0 0,-2z M56,0l2,0 0,2 -2,0 0,-2z M60,0l2,0 0,2 -2,0 0,-2z M62,0l2,0 0,2 -2,0 0,-2z M72,0l2,0 0,2 -2,0 0,-2z M76,0l2,0 0,2 -2,0 0,-2z M78,0l2,0 0,2 -2,0 0,-2z M80,0l2,0 0,2 -2,0 0,-2z M82,0l2,0 0,2 -2,0 0,-2z M84,0l2,0 0,2 -2,0 0,-2z M86,0l2,0 0,2 -2,0 0,-2z M88,0l2,0 0,2 -2,0 0,-2z M0,2l2,0 0,2 -2,0 0,-2z M12,2l2,0 0,2 -2,0 0,-2z M16,2l2,0 0,2 -2,0 0,-2z M18,2l2,0 0,2 -2,0 0,-2z M20,2l2,0 0,2 -2,0 0,-2z M22,2l2,0 0,2 -2,0 0,-2z M24,2l2,0 0,2 -2,0 0,-2z M32,2l2,0 0,2 -2,0 0,-2z M36,2l2,0 0,2 -2,0 0,-2z M44,2l2,0 0,2 -2,0 0,-2z M48,2l2,0 0,2 -2,0 0,-2z M50,2l2,0 0,2 -2,0 0,-2z M52,2l2,0 0,2 -2,0 0,-2z M54,2l2,0 0,2 -2,0 0,-2z M56,2l2,0 0,2 -2,0 0,-2z M60,2l2,0 0,2 -2,0 0,-2z M64,2l2,0 0,2 -2,0 0,-2z M70,2l2,0 0,2 -2,0 0,-2z M76,2l2,0 0,2 -2,0 0,-2z M88,2l2,0 0,2 -2,0 0,-2z M0,4l2,0 0,2 -2,0 0,-2z M4,4l2,0 0,2 -2,0 0,-2z M6,4l2,0 0,2 -2,0 0,-2z M8,4l2,0 0,2 -2,0 0,-2z M12,4l2,0 0,2 -2,0 0,-2z M16,4l2,0 0,2 -2,0 0,-2z M18,4l2,0 0,2 -2,0 0,-2z M26,4l2,0 0,2 -2,0 0,-2z M28,4l2,0 0,2 -2,0 0,-2z M32,4l2,0 0,2 -2,0 0,-2z M38,4l2,0 0,2 -2,0 0,-2z M44,4l2,0 0,2 -2,0 0,-2z M48,4l2,0 0,2 -2,0 0,-2z M52,4l2,0 0,2 -2,0 0,-2z M60,4l2,0 0,2 -2,0 0,-2z M66,4l2,0 0,2 -2,0 0,-2z M70,4l2,0 0,2 -2,0 0,-2z M76,4l2,0 0,2 -2,0 0,-2z M80,4l2,0 0,2 -2,0 0,-2z M82,4l2,0 0,2 -2,0 0,-2z M84,4l2,0 0,2 -2,0 0,-2z M88,4l2,0 0,2 -2,0 0,-2z M0,6l2,0 0,2 -2,0 0,-2z M4,6l2,0 0,2 -2,0 0,-2z M6,6l2,0 0,2 -2,0 0,-2z M8,6l2,0 0,2 -2,0 0,-2z M12,6l2,0 0,2 -2,0 0,-2z M18,6l2,0 0,2 -2,0 0,-2z M22,6l2,0 0,2 -2,0 0,-2z M26,6l2,0 0,2 -2,0 0,-2z M28,6l2,0 0,2 -2,0 0,-2z M32,6l2,0 0,2 -2,0 0,-2z M34,6l2,0 0,2 -2,0 0,-2z M36,6l2,0 0,2 -2,0 0,-2z M40,6l2,0 0,2 -2,0 0,-2z M44,6l2,0 0,2 -2,0 0,-2z M48,6l2,0 0,2 -2,0 0,-2z M56,6l2,0 0,2 -2,0 0,-2z M62,6l2,0 0,2 -2,0 0,-2z M64,6l2,0 0,2 -2,0 0,-2z M66,6l2,0 0,2 -2,0 0,-2z M70,6l2,0 0,2 -2,0 0,-2z M72,6l2,0 0,2 -2,0 0,-2z M76,6l2,0 0,2 -2,0 0,-2z M80,6l2,0 0,2 -2,0 0,-2z M82,6l2,0 0,2 -2,0 0,-2z M84,6l2,0 0,2 -2,0 0,-2z M88,6l2,0 0,2 -2,0 0,-2z M0,8l2,0 0,2 -2,0 0,-2z M4,8l2,0 0,2 -2,0 0,-2z M6,8l2,0 0,2 -2,0 0,-2z M8,8l2,0 0,2 -2,0 0,-2z M12,8l2,0 0,2 -2,0 0,-2z M16,8l2,0 0,2 -2,0 0,-2z M20,8l2,0 0,2 -2,0 0,-2z M26,8l2,0 0,2 -2,0 0,-2z M30,8l2,0 0,2 -2,0 0,-2z M34,8l2,0 0,2 -2,0 0,-2z M36,8l2,0 0,2 -2,0 0,-2z M38,8l2,0 0,2 -2,0 0,-2z M40,8l2,0 0,2 -2,0 0,-2z M42,8l2,0 0,2 -2,0 0,-2z M44,8l2,0 0,2 -2,0 0,-2z M46,8l2,0 0,2 -2,0 0,-2z M48,8l2,0 0,2 -2,0 0,-2z M50,8l2,0 0,2 -2,0 0,-2z M52,8l2,0 0,2 -2,0 0,-2z M60,8l2,0 0,2 -2,0 0,-2z M64,8l2,0 0,2 -2,0 0,-2z M68,8l2,0 0,2 -2,0 0,-2z M70,8l2,0 0,2 -2,0 0,-2z M72,8l2,0 0,2 -2,0 0,-2z M76,8l2,0 0,2 -2,0 0,-2z M80,8l2,0 0,2 -2,0 0,-2z M82,8l2,0 0,2 -2,0 0,-2z M84,8l2,0 0,2 -2,0 0,-2z M88,8l2,0 0,2 -2,0 0,-2z M0,10l2,0 0,2 -2,0 0,-2z M12,10l2,0 0,2 -2,0 0,-2z M20,10l2,0 0,2 -2,0 0,-2z M22,10l2,0 0,2 -2,0 0,-2z M24,10l2,0 0,2 -2,0 0,-2z M28,10l2,0 0,2 -2,0 0,-2z M34,10l2,0 0,2 -2,0 0,-2z M36,10l2,0 0,2 -2,0 0,-2z M40,10l2,0 0,2 -2,0 0,-2z M48,10l2,0 0,2 -2,0 0,-2z M54,10l2,0 0,2 -2,0 0,-2z M56,10l2,0 0,2 -2,0 0,-2z M58,10l2,0 0,2 -2,0 0,-2z M66,10l2,0 0,2 -2,0 0,-2z M76,10l2,0 0,2 -2,0 0,-2z M88,10l2,0 0,2 -2,0 0,-2z M0,12l2,0 0,2 -2,0 0,-2z M2,12l2,0 0,2 -2,0 0,-2z M4,12l2,0 0,2 -2,0 0,-2z M6,12l2,0 0,2 -2,0 0,-2z M8,12l2,0 0,2 -2,0 0,-2z M10,12l2,0 0,2 -2,0 0,-2z M12,12l2,0 0,2 -2,0 0,-2z M16,12l2,0 0,2 -2,0 0,-2z M20,12l2,0 0,2 -2,0 0,-2z M24,12l2,0 0,2 -2,0 0,-2z M28,12l2,0 0,2 -2,0 0,-2z M32,12l2,0 0,2 -2,0 0,-2z M36,12l2,0 0,2 -2,0 0,-2z M40,12l2,0 0,2 -2,0 0,-2z M44,12l2,0 0,2 -2,0 0,-2z M48,12l2,0 0,2 -2,0 0,-2z M52,12l2,0 0,2 -2,0 0,-2z M56,12l2,0 0,2 -2,0 0,-2z M60,12l2,0 0,2 -2,0 0,-2z M64,12l2,0 0,2 -2,0 0,-2z M68,12l2,0 0,2 -2,0 0,-2z M72,12l2,0 0,2 -2,0 0,-2z M76,12l2,0 0,2 -2,0 0,-2z M78,12l2,0 0,2 -2,0 0,-2z M80,12l2,0 0,2 -2,0 0,-2z M82,12l2,0 0,2 -2,0 0,-2z M84,12l2,0 0,2 -2,0 0,-2z M86,12l2,0 0,2 -2,0 0,-2z M88,12l2,0 0,2 -2,0 0,-2z M18,14l2,0 0,2 -2,0 0,-2z M30,14l2,0 0,2 -2,0 0,-2z M32,14l2,0 0,2 -2,0 0,-2z M34,14l2,0 0,2 -2,0 0,-2z M36,14l2,0 0,2 -2,0 0,-2z M38,14l2,0 0,2 -2,0 0,-2z M40,14l2,0 0,2 -2,0 0,-2z M48,14l2,0 0,2 -2,0 0,-2z M58,14l2,0 0,2 -2,0 0,-2z M60,14l2,0 0,2 -2,0 0,-2z M70,14l2,0 0,2 -2,0 0,-2z M0,16l2,0 0,2 -2,0 0,-2z M6,16l2,0 0,2 -2,0 0,-2z M8,16l2,0 0,2 -2,0 0,-2z M10,16l2,0 0,2 -2,0 0,-2z M12,16l2,0 0,2 -2,0 0,-2z M14,16l2,0 0,2 -2,0 0,-2z M16,16l2,0 0,2 -2,0 0,-2z M18,16l2,0 0,2 -2,0 0,-2z M20,16l2,0 0,2 -2,0 0,-2z M24,16l2,0 0,2 -2,0 0,-2z M26,16l2,0 0,2 -2,0 0,-2z M32,16l2,0 0,2 -2,0 0,-2z M36,16l2,0 0,2 -2,0 0,-2z M40,16l2,0 0,2 -2,0 0,-2z M42,16l2,0 0,2 -2,0 0,-2z M44,16l2,0 0,2 -2,0 0,-2z M46,16l2,0 0,2 -2,0 0,-2z M48,16l2,0 0,2 -2,0 0,-2z M50,16l2,0 0,2 -2,0 0,-2z M52,16l2,0 0,2 -2,0 0,-2z M56,16l2,0 0,2 -2,0 0,-2z M58,16l2,0 0,2 -2,0 0,-2z M60,16l2,0 0,2 -2,0 0,-2z M68,16l2,0 0,2 -2,0 0,-2z M74,16l2,0 0,2 -2,0 0,-2z M80,16l2,0 0,2 -2,0 0,-2z M84,16l2,0 0,2 -2,0 0,-2z M86,16l2,0 0,2 -2,0 0,-2z M88,16l2,0 0,2 -2,0 0,-2z M4,18l2,0 0,2 -2,0 0,-2z M16,18l2,0 0,2 -2,0 0,-2z M20,18l2,0 0,2 -2,0 0,-2z M34,18l2,0 0,2 -2,0 0,-2z M36,18l2,0 0,2 -2,0 0,-2z M48,18l2,0 0,2 -2,0 0,-2z M52,18l2,0 0,2 -2,0 0,-2z M54,18l2,0 0,2 -2,0 0,-2z M58,18l2,0 0,2 -2,0 0,-2z M60,18l2,0 0,2 -2,0 0,-2z M64,18l2,0 0,2 -2,0 0,-2z M66,18l2,0 0,2 -2,0 0,-2z M68,18l2,0 0,2 -2,0 0,-2z M70,18l2,0 0,2 -2,0 0,-2z M72,18l2,0 0,2 -2,0 0,-2z M76,18l2,0 0,2 -2,0 0,-2z M82,18l2,0 0,2 -2,0 0,-2z M84,18l2,0 0,2 -2,0 0,-2z M88,18l2,0 0,2 -2,0 0,-2z M0,20l2,0 0,2 -2,0 0,-2z M12,20l2,0 0,2 -2,0 0,-2z M22,20l2,0 0,2 -2,0 0,-2z M24,20l2,0 0,2 -2,0 0,-2z M28,20l2,0 0,2 -2,0 0,-2z M30,20l2,0 0,2 -2,0 0,-2z M40,20l2,0 0,2 -2,0 0,-2z M42,20l2,0 0,2 -2,0 0,-2z M44,20l2,0 0,2 -2,0 0,-2z M48,20l2,0 0,2 -2,0 0,-2z M50,20l2,0 0,2 -2,0 0,-2z M56,20l2,0 0,2 -2,0 0,-2z M62,20l2,0 0,2 -2,0 0,-2z M64,20l2,0 0,2 -2,0 0,-2z M70,20l2,0 0,2 -2,0 0,-2z M74,20l2,0 0,2 -2,0 0,-2z M80,20l2,0 0,2 -2,0 0,-2z M84,20l2,0 0,2 -2,0 0,-2z M86,20l2,0 0,2 -2,0 0,-2z M88,20l2,0 0,2 -2,0 0,-2z M0,22l2,0 0,2 -2,0 0,-2z M2,22l2,0 0,2 -2,0 0,-2z M4,22l2,0 0,2 -2,0 0,-2z M6,22l2,0 0,2 -2,0 0,-2z M10,22l2,0 0,2 -2,0 0,-2z M16,22l2,0 0,2 -2,0 0,-2z M18,22l2,0 0,2 -2,0 0,-2z M20,22l2,0 0,2 -2,0 0,-2z M26,22l2,0 0,2 -2,0 0,-2z M28,22l2,0 0,2 -2,0 0,-2z M34,22l2,0 0,2 -2,0 0,-2z M38,22l2,0 0,2 -2,0 0,-2z M40,22l2,0 0,2 -2,0 0,-2z M42,22l2,0 0,2 -2,0 0,-2z M44,22l2,0 0,2 -2,0 0,-2z M52,22l2,0 0,2 -2,0 0,-2z M56,22l2,0 0,2 -2,0 0,-2z M58,22l2,0 0,2 -2,0 0,-2z M60,22l2,0 0,2 -2,0 0,-2z M62,22l2,0 0,2 -2,0 0,-2z M64,22l2,0 0,2 -2,0 0,-2z M66,22l2,0 0,2 -2,0 0,-2z M70,22l2,0 0,2 -2,0 0,-2z M72,22l2,0 0,2 -2,0 0,-2z M76,22l2,0 0,2 -2,0 0,-2z M84,22l2,0 0,2 -2,0 0,-2z M88,22l2,0 0,2 -2,0 0,-2z M0,24l2,0 0,2 -2,0 0,-2z M6,24l2,0 0,2 -2,0 0,-2z M12,24l2,0 0,2 -2,0 0,-2z M18,24l2,0 0,2 -2,0 0,-2z M20,24l2,0 0,2 -2,0 0,-2z M24,24l2,0 0,2 -2,0 0,-2z M26,24l2,0 0,2 -2,0 0,-2z M28,24l2,0 0,2 -2,0 0,-2z M30,24l2,0 0,2 -2,0 0,-2z M32,24l2,0 0,2 -2,0 0,-2z M36,24l2,0 0,2 -2,0 0,-2z M38,24l2,0 0,2 -2,0 0,-2z M42,24l2,0 0,2 -2,0 0,-2z M44,24l2,0 0,2 -2,0 0,-2z M46,24l2,0 0,2 -2,0 0,-2z M48,24l2,0 0,2 -2,0 0,-2z M56,24l2,0 0,2 -2,0 0,-2z M64,24l2,0 0,2 -2,0 0,-2z M66,24l2,0 0,2 -2,0 0,-2z M68,24l2,0 0,2 -2,0 0,-2z M70,24l2,0 0,2 -2,0 0,-2z M76,24l2,0 0,2 -2,0 0,-2z M86,24l2,0 0,2 -2,0 0,-2z M88,24l2,0 0,2 -2,0 0,-2z M0,26l2,0 0,2 -2,0 0,-2z M4,26l2,0 0,2 -2,0 0,-2z M8,26l2,0 0,2 -2,0 0,-2z M14,26l2,0 0,2 -2,0 0,-2z M16,26l2,0 0,2 -2,0 0,-2z M20,26l2,0 0,2 -2,0 0,-2z M22,26l2,0 0,2 -2,0 0,-2z M26,26l2,0 0,2 -2,0 0,-2z M28,26l2,0 0,2 -2,0 0,-2z M30,26l2,0 0,2 -2,0 0,-2z M46,26l2,0 0,2 -2,0 0,-2z M50,26l2,0 0,2 -2,0 0,-2z M52,26l2,0 0,2 -2,0 0,-2z M54,26l2,0 0,2 -2,0 0,-2z M58,26l2,0 0,2 -2,0 0,-2z M60,26l2,0 0,2 -2,0 0,-2z M66,26l2,0 0,2 -2,0 0,-2z M70,26l2,0 0,2 -2,0 0,-2z M72,26l2,0 0,2 -2,0 0,-2z M74,26l2,0 0,2 -2,0 0,-2z M76,26l2,0 0,2 -2,0 0,-2z M78,26l2,0 0,2 -2,0 0,-2z M80,26l2,0 0,2 -2,0 0,-2z M84,26l2,0 0,2 -2,0 0,-2z M0,28l2,0 0,2 -2,0 0,-2z M6,28l2,0 0,2 -2,0 0,-2z M8,28l2,0 0,2 -2,0 0,-2z M10,28l2,0 0,2 -2,0 0,-2z M12,28l2,0 0,2 -2,0 0,-2z M14,28l2,0 0,2 -2,0 0,-2z M18,28l2,0 0,2 -2,0 0,-2z M28,28l2,0 0,2 -2,0 0,-2z M32,28l2,0 0,2 -2,0 0,-2z M34,28l2,0 0,2 -2,0 0,-2z M40,28l2,0 0,2 -2,0 0,-2z M44,28l2,0 0,2 -2,0 0,-2z M48,28l2,0 0,2 -2,0 0,-2z M52,28l2,0 0,2 -2,0 0,-2z M56,28l2,0 0,2 -2,0 0,-2z M60,28l2,0 0,2 -2,0 0,-2z M64,28l2,0 0,2 -2,0 0,-2z M66,28l2,0 0,2 -2,0 0,-2z M70,28l2,0 0,2 -2,0 0,-2z M76,28l2,0 0,2 -2,0 0,-2z M78,28l2,0 0,2 -2,0 0,-2z M80,28l2,0 0,2 -2,0 0,-2z M82,28l2,0 0,2 -2,0 0,-2z M84,28l2,0 0,2 -2,0 0,-2z M2,30l2,0 0,2 -2,0 0,-2z M4,30l2,0 0,2 -2,0 0,-2z M6,30l2,0 0,2 -2,0 0,-2z M8,30l2,0 0,2 -2,0 0,-2z M14,30l2,0 0,2 -2,0 0,-2z M16,30l2,0 0,2 -2,0 0,-2z M18,30l2,0 0,2 -2,0 0,-2z M22,30l2,0 0,2 -2,0 0,-2z M26,30l2,0 0,2 -2,0 0,-2z M30,30l2,0 0,2 -2,0 0,-2z M34,30l2,0 0,2 -2,0 0,-2z M38,30l2,0 0,2 -2,0 0,-2z M40,30l2,0 0,2 -2,0 0,-2z M42,30l2,0 0,2 -2,0 0,-2z M44,30l2,0 0,2 -2,0 0,-2z M46,30l2,0 0,2 -2,0 0,-2z M56,30l2,0 0,2 -2,0 0,-2z M58,30l2,0 0,2 -2,0 0,-2z M60,30l2,0 0,2 -2,0 0,-2z M62,30l2,0 0,2 -2,0 0,-2z M64,30l2,0 0,2 -2,0 0,-2z M66,30l2,0 0,2 -2,0 0,-2z M68,30l2,0 0,2 -2,0 0,-2z M70,30l2,0 0,2 -2,0 0,-2z M76,30l2,0 0,2 -2,0 0,-2z M82,30l2,0 0,2 -2,0 0,-2z M84,30l2,0 0,2 -2,0 0,-2z M88,30l2,0 0,2 -2,0 0,-2z M6,32l2,0 0,2 -2,0 0,-2z M8,32l2,0 0,2 -2,0 0,-2z M10,32l2,0 0,2 -2,0 0,-2z M12,32l2,0 0,2 -2,0 0,-2z M20,32l2,0 0,2 -2,0 0,-2z M24,32l2,0 0,2 -2,0 0,-2z M26,32l2,0 0,2 -2,0 0,-2z M28,32l2,0 0,2 -2,0 0,-2z M30,32l2,0 0,2 -2,0 0,-2z M36,32l2,0 0,2 -2,0 0,-2z M38,32l2,0 0,2 -2,0 0,-2z M48,32l2,0 0,2 -2,0 0,-2z M54,32l2,0 0,2 -2,0 0,-2z M60,32l2,0 0,2 -2,0 0,-2z M62,32l2,0 0,2 -2,0 0,-2z M64,32l2,0 0,2 -2,0 0,-2z M70,32l2,0 0,2 -2,0 0,-2z M72,32l2,0 0,2 -2,0 0,-2z M74,32l2,0 0,2 -2,0 0,-2z M76,32l2,0 0,2 -2,0 0,-2z M82,32l2,0 0,2 -2,0 0,-2z M86,32l2,0 0,2 -2,0 0,-2z M88,32l2,0 0,2 -2,0 0,-2z M0,34l2,0 0,2 -2,0 0,-2z M2,34l2,0 0,2 -2,0 0,-2z M8,34l2,0 0,2 -2,0 0,-2z M10,34l2,0 0,2 -2,0 0,-2z M16,34l2,0 0,2 -2,0 0,-2z M18,34l2,0 0,2 -2,0 0,-2z M20,34l2,0 0,2 -2,0 0,-2z M22,34l2,0 0,2 -2,0 0,-2z M26,34l2,0 0,2 -2,0 0,-2z M30,34l2,0 0,2 -2,0 0,-2z M32,34l2,0 0,2 -2,0 0,-2z M34,34l2,0 0,2 -2,0 0,-2z M38,34l2,0 0,2 -2,0 0,-2z M40,34l2,0 0,2 -2,0 0,-2z M42,34l2,0 0,2 -2,0 0,-2z M46,34l2,0 0,2 -2,0 0,-2z M48,34l2,0 0,2 -2,0 0,-2z M50,34l2,0 0,2 -2,0 0,-2z M54,34l2,0 0,2 -2,0 0,-2z M56,34l2,0 0,2 -2,0 0,-2z M60,34l2,0 0,2 -2,0 0,-2z M64,34l2,0 0,2 -2,0 0,-2z M68,34l2,0 0,2 -2,0 0,-2z M72,34l2,0 0,2 -2,0 0,-2z M74,34l2,0 0,2 -2,0 0,-2z M84,34l2,0 0,2 -2,0 0,-2z M88,34l2,0 0,2 -2,0 0,-2z M2,36l2,0 0,2 -2,0 0,-2z M4,36l2,0 0,2 -2,0 0,-2z M8,36l2,0 0,2 -2,0 0,-2z M10,36l2,0 0,2 -2,0 0,-2z M12,36l2,0 0,2 -2,0 0,-2z M14,36l2,0 0,2 -2,0 0,-2z M24,36l2,0 0,2 -2,0 0,-2z M26,36l2,0 0,2 -2,0 0,-2z M38,36l2,0 0,2 -2,0 0,-2z M40,36l2,0 0,2 -2,0 0,-2z M44,36l2,0 0,2 -2,0 0,-2z M46,36l2,0 0,2 -2,0 0,-2z M48,36l2,0 0,2 -2,0 0,-2z M50,36l2,0 0,2 -2,0 0,-2z M52,36l2,0 0,2 -2,0 0,-2z M54,36l2,0 0,2 -2,0 0,-2z M60,36l2,0 0,2 -2,0 0,-2z M62,36l2,0 0,2 -2,0 0,-2z M66,36l2,0 0,2 -2,0 0,-2z M78,36l2,0 0,2 -2,0 0,-2z M80,36l2,0 0,2 -2,0 0,-2z M84,36l2,0 0,2 -2,0 0,-2z M88,36l2,0 0,2 -2,0 0,-2z M0,38l2,0 0,2 -2,0 0,-2z M6,38l2,0 0,2 -2,0 0,-2z M10,38l2,0 0,2 -2,0 0,-2z M16,38l2,0 0,2 -2,0 0,-2z M20,38l2,0 0,2 -2,0 0,-2z M22,38l2,0 0,2 -2,0 0,-2z M26,38l2,0 0,2 -2,0 0,-2z M32,38l2,0 0,2 -2,0 0,-2z M40,38l2,0 0,2 -2,0 0,-2z M46,38l2,0 0,2 -2,0 0,-2z M48,38l2,0 0,2 -2,0 0,-2z M52,38l2,0 0,2 -2,0 0,-2z M56,38l2,0 0,2 -2,0 0,-2z M60,38l2,0 0,2 -2,0 0,-2z M62,38l2,0 0,2 -2,0 0,-2z M72,38l2,0 0,2 -2,0 0,-2z M80,38l2,0 0,2 -2,0 0,-2z M82,38l2,0 0,2 -2,0 0,-2z M84,38l2,0 0,2 -2,0 0,-2z M86,38l2,0 0,2 -2,0 0,-2z M88,38l2,0 0,2 -2,0 0,-2z M2,40l2,0 0,2 -2,0 0,-2z M6,40l2,0 0,2 -2,0 0,-2z M8,40l2,0 0,2 -2,0 0,-2z M10,40l2,0 0,2 -2,0 0,-2z M12,40l2,0 0,2 -2,0 0,-2z M14,40l2,0 0,2 -2,0 0,-2z M16,40l2,0 0,2 -2,0 0,-2z M18,40l2,0 0,2 -2,0 0,-2z M24,40l2,0 0,2 -2,0 0,-2z M28,40l2,0 0,2 -2,0 0,-2z M30,40l2,0 0,2 -2,0 0,-2z M32,40l2,0 0,2 -2,0 0,-2z M34,40l2,0 0,2 -2,0 0,-2z M36,40l2,0 0,2 -2,0 0,-2z M38,40l2,0 0,2 -2,0 0,-2z M40,40l2,0 0,2 -2,0 0,-2z M42,40l2,0 0,2 -2,0 0,-2z M44,40l2,0 0,2 -2,0 0,-2z M46,40l2,0 0,2 -2,0 0,-2z M48,40l2,0 0,2 -2,0 0,-2z M50,40l2,0 0,2 -2,0 0,-2z M56,40l2,0 0,2 -2,0 0,-2z M58,40l2,0 0,2 -2,0 0,-2z M60,40l2,0 0,2 -2,0 0,-2z M62,40l2,0 0,2 -2,0 0,-2z M66,40l2,0 0,2 -2,0 0,-2z M68,40l2,0 0,2 -2,0 0,-2z M72,40l2,0 0,2 -2,0 0,-2z M74,40l2,0 0,2 -2,0 0,-2z M76,40l2,0 0,2 -2,0 0,-2z M78,40l2,0 0,2 -2,0 0,-2z M80,40l2,0 0,2 -2,0 0,-2z M82,40l2,0 0,2 -2,0 0,-2z M88,40l2,0 0,2 -2,0 0,-2z M0,42l2,0 0,2 -2,0 0,-2z M2,42l2,0 0,2 -2,0 0,-2z M6,42l2,0 0,2 -2,0 0,-2z M8,42l2,0 0,2 -2,0 0,-2z M16,42l2,0 0,2 -2,0 0,-2z M18,42l2,0 0,2 -2,0 0,-2z M22,42l2,0 0,2 -2,0 0,-2z M24,42l2,0 0,2 -2,0 0,-2z M38,42l2,0 0,2 -2,0 0,-2z M40,42l2,0 0,2 -2,0 0,-2z M48,42l2,0 0,2 -2,0 0,-2z M52,42l2,0 0,2 -2,0 0,-2z M58,42l2,0 0,2 -2,0 0,-2z M60,42l2,0 0,2 -2,0 0,-2z M68,42l2,0 0,2 -2,0 0,-2z M70,42l2,0 0,2 -2,0 0,-2z M72,42l2,0 0,2 -2,0 0,-2z M80,42l2,0 0,2 -2,0 0,-2z M82,42l2,0 0,2 -2,0 0,-2z M84,42l2,0 0,2 -2,0 0,-2z M86,42l2,0 0,2 -2,0 0,-2z M0,44l2,0 0,2 -2,0 0,-2z M8,44l2,0 0,2 -2,0 0,-2z M12,44l2,0 0,2 -2,0 0,-2z M16,44l2,0 0,2 -2,0 0,-2z M20,44l2,0 0,2 -2,0 0,-2z M22,44l2,0 0,2 -2,0 0,-2z M24,44l2,0 0,2 -2,0 0,-2z M40,44l2,0 0,2 -2,0 0,-2z M44,44l2,0 0,2 -2,0 0,-2z M48,44l2,0 0,2 -2,0 0,-2z M50,44l2,0 0,2 -2,0 0,-2z M54,44l2,0 0,2 -2,0 0,-2z M62,44l2,0 0,2 -2,0 0,-2z M66,44l2,0 0,2 -2,0 0,-2z M68,44l2,0 0,2 -2,0 0,-2z M70,44l2,0 0,2 -2,0 0,-2z M72,44l2,0 0,2 -2,0 0,-2z M76,44l2,0 0,2 -2,0 0,-2z M80,44l2,0 0,2 -2,0 0,-2z M84,44l2,0 0,2 -2,0 0,-2z M86,44l2,0 0,2 -2,0 0,-2z M88,44l2,0 0,2 -2,0 0,-2z M2,46l2,0 0,2 -2,0 0,-2z M6,46l2,0 0,2 -2,0 0,-2z M8,46l2,0 0,2 -2,0 0,-2z M16,46l2,0 0,2 -2,0 0,-2z M22,46l2,0 0,2 -2,0 0,-2z M24,46l2,0 0,2 -2,0 0,-2z M28,46l2,0 0,2 -2,0 0,-2z M30,46l2,0 0,2 -2,0 0,-2z M34,46l2,0 0,2 -2,0 0,-2z M38,46l2,0 0,2 -2,0 0,-2z M40,46l2,0 0,2 -2,0 0,-2z M48,46l2,0 0,2 -2,0 0,-2z M52,46l2,0 0,2 -2,0 0,-2z M56,46l2,0 0,2 -2,0 0,-2z M58,46l2,0 0,2 -2,0 0,-2z M60,46l2,0 0,2 -2,0 0,-2z M62,46l2,0 0,2 -2,0 0,-2z M64,46l2,0 0,2 -2,0 0,-2z M68,46l2,0 0,2 -2,0 0,-2z M70,46l2,0 0,2 -2,0 0,-2z M72,46l2,0 0,2 -2,0 0,-2z M80,46l2,0 0,2 -2,0 0,-2z M84,46l2,0 0,2 -2,0 0,-2z M0,48l2,0 0,2 -2,0 0,-2z M2,48l2,0 0,2 -2,0 0,-2z M6,48l2,0 0,2 -2,0 0,-2z M8,48l2,0 0,2 -2,0 0,-2z M10,48l2,0 0,2 -2,0 0,-2z M12,48l2,0 0,2 -2,0 0,-2z M14,48l2,0 0,2 -2,0 0,-2z M16,48l2,0 0,2 -2,0 0,-2z M18,48l2,0 0,2 -2,0 0,-2z M24,48l2,0 0,2 -2,0 0,-2z M26,48l2,0 0,2 -2,0 0,-2z M28,48l2,0 0,2 -2,0 0,-2z M40,48l2,0 0,2 -2,0 0,-2z M42,48l2,0 0,2 -2,0 0,-2z M44,48l2,0 0,2 -2,0 0,-2z M46,48l2,0 0,2 -2,0 0,-2z M48,48l2,0 0,2 -2,0 0,-2z M50,48l2,0 0,2 -2,0 0,-2z M56,48l2,0 0,2 -2,0 0,-2z M58,48l2,0 0,2 -2,0 0,-2z M64,48l2,0 0,2 -2,0 0,-2z M66,48l2,0 0,2 -2,0 0,-2z M72,48l2,0 0,2 -2,0 0,-2z M74,48l2,0 0,2 -2,0 0,-2z M76,48l2,0 0,2 -2,0 0,-2z M78,48l2,0 0,2 -2,0 0,-2z M80,48l2,0 0,2 -2,0 0,-2z M82,48l2,0 0,2 -2,0 0,-2z M84,48l2,0 0,2 -2,0 0,-2z M88,48l2,0 0,2 -2,0 0,-2z M0,50l2,0 0,2 -2,0 0,-2z M2,50l2,0 0,2 -2,0 0,-2z M14,50l2,0 0,2 -2,0 0,-2z M18,50l2,0 0,2 -2,0 0,-2z M24,50l2,0 0,2 -2,0 0,-2z M28,50l2,0 0,2 -2,0 0,-2z M36,50l2,0 0,2 -2,0 0,-2z M40,50l2,0 0,2 -2,0 0,-2z M46,50l2,0 0,2 -2,0 0,-2z M50,50l2,0 0,2 -2,0 0,-2z M52,50l2,0 0,2 -2,0 0,-2z M54,50l2,0 0,2 -2,0 0,-2z M58,50l2,0 0,2 -2,0 0,-2z M60,50l2,0 0,2 -2,0 0,-2z M64,50l2,0 0,2 -2,0 0,-2z M66,50l2,0 0,2 -2,0 0,-2z M70,50l2,0 0,2 -2,0 0,-2z M72,50l2,0 0,2 -2,0 0,-2z M74,50l2,0 0,2 -2,0 0,-2z M76,50l2,0 0,2 -2,0 0,-2z M78,50l2,0 0,2 -2,0 0,-2z M84,50l2,0 0,2 -2,0 0,-2z M86,50l2,0 0,2 -2,0 0,-2z M88,50l2,0 0,2 -2,0 0,-2z M0,52l2,0 0,2 -2,0 0,-2z M6,52l2,0 0,2 -2,0 0,-2z M12,52l2,0 0,2 -2,0 0,-2z M16,52l2,0 0,2 -2,0 0,-2z M20,52l2,0 0,2 -2,0 0,-2z M22,52l2,0 0,2 -2,0 0,-2z M30,52l2,0 0,2 -2,0 0,-2z M34,52l2,0 0,2 -2,0 0,-2z M36,52l2,0 0,2 -2,0 0,-2z M38,52l2,0 0,2 -2,0 0,-2z M44,52l2,0 0,2 -2,0 0,-2z M46,52l2,0 0,2 -2,0 0,-2z M52,52l2,0 0,2 -2,0 0,-2z M54,52l2,0 0,2 -2,0 0,-2z M62,52l2,0 0,2 -2,0 0,-2z M66,52l2,0 0,2 -2,0 0,-2z M68,52l2,0 0,2 -2,0 0,-2z M74,52l2,0 0,2 -2,0 0,-2z M6,54l2,0 0,2 -2,0 0,-2z M8,54l2,0 0,2 -2,0 0,-2z M10,54l2,0 0,2 -2,0 0,-2z M14,54l2,0 0,2 -2,0 0,-2z M30,54l2,0 0,2 -2,0 0,-2z M36,54l2,0 0,2 -2,0 0,-2z M38,54l2,0 0,2 -2,0 0,-2z M48,54l2,0 0,2 -2,0 0,-2z M56,54l2,0 0,2 -2,0 0,-2z M60,54l2,0 0,2 -2,0 0,-2z M66,54l2,0 0,2 -2,0 0,-2z M70,54l2,0 0,2 -2,0 0,-2z M80,54l2,0 0,2 -2,0 0,-2z M82,54l2,0 0,2 -2,0 0,-2z M84,54l2,0 0,2 -2,0 0,-2z M86,54l2,0 0,2 -2,0 0,-2z M2,56l2,0 0,2 -2,0 0,-2z M6,56l2,0 0,2 -2,0 0,-2z M12,56l2,0 0,2 -2,0 0,-2z M14,56l2,0 0,2 -2,0 0,-2z M16,56l2,0 0,2 -2,0 0,-2z M18,56l2,0 0,2 -2,0 0,-2z M20,56l2,0 0,2 -2,0 0,-2z M24,56l2,0 0,2 -2,0 0,-2z M30,56l2,0 0,2 -2,0 0,-2z M38,56l2,0 0,2 -2,0 0,-2z M40,56l2,0 0,2 -2,0 0,-2z M46,56l2,0 0,2 -2,0 0,-2z M50,56l2,0 0,2 -2,0 0,-2z M58,56l2,0 0,2 -2,0 0,-2z M62,56l2,0 0,2 -2,0 0,-2z M64,56l2,0 0,2 -2,0 0,-2z M66,56l2,0 0,2 -2,0 0,-2z M70,56l2,0 0,2 -2,0 0,-2z M78,56l2,0 0,2 -2,0 0,-2z M82,56l2,0 0,2 -2,0 0,-2z M86,56l2,0 0,2 -2,0 0,-2z M88,56l2,0 0,2 -2,0 0,-2z M0,58l2,0 0,2 -2,0 0,-2z M2,58l2,0 0,2 -2,0 0,-2z M14,58l2,0 0,2 -2,0 0,-2z M16,58l2,0 0,2 -2,0 0,-2z M20,58l2,0 0,2 -2,0 0,-2z M24,58l2,0 0,2 -2,0 0,-2z M28,58l2,0 0,2 -2,0 0,-2z M32,58l2,0 0,2 -2,0 0,-2z M34,58l2,0 0,2 -2,0 0,-2z M36,58l2,0 0,2 -2,0 0,-2z M44,58l2,0 0,2 -2,0 0,-2z M58,58l2,0 0,2 -2,0 0,-2z M60,58l2,0 0,2 -2,0 0,-2z M64,58l2,0 0,2 -2,0 0,-2z M66,58l2,0 0,2 -2,0 0,-2z M68,58l2,0 0,2 -2,0 0,-2z M76,58l2,0 0,2 -2,0 0,-2z M78,58l2,0 0,2 -2,0 0,-2z M80,58l2,0 0,2 -2,0 0,-2z M82,58l2,0 0,2 -2,0 0,-2z M84,58l2,0 0,2 -2,0 0,-2z M86,58l2,0 0,2 -2,0 0,-2z M88,58l2,0 0,2 -2,0 0,-2z M6,60l2,0 0,2 -2,0 0,-2z M8,60l2,0 0,2 -2,0 0,-2z M10,60l2,0 0,2 -2,0 0,-2z M12,60l2,0 0,2 -2,0 0,-2z M14,60l2,0 0,2 -2,0 0,-2z M16,60l2,0 0,2 -2,0 0,-2z M18,60l2,0 0,2 -2,0 0,-2z M26,60l2,0 0,2 -2,0 0,-2z M28,60l2,0 0,2 -2,0 0,-2z M34,60l2,0 0,2 -2,0 0,-2z M36,60l2,0 0,2 -2,0 0,-2z M38,60l2,0 0,2 -2,0 0,-2z M40,60l2,0 0,2 -2,0 0,-2z M44,60l2,0 0,2 -2,0 0,-2z M46,60l2,0 0,2 -2,0 0,-2z M48,60l2,0 0,2 -2,0 0,-2z M54,60l2,0 0,2 -2,0 0,-2z M58,60l2,0 0,2 -2,0 0,-2z M60,60l2,0 0,2 -2,0 0,-2z M62,60l2,0 0,2 -2,0 0,-2z M64,60l2,0 0,2 -2,0 0,-2z M66,60l2,0 0,2 -2,0 0,-2z M72,60l2,0 0,2 -2,0 0,-2z M76,60l2,0 0,2 -2,0 0,-2z M80,60l2,0 0,2 -2,0 0,-2z M82,60l2,0 0,2 -2,0 0,-2z M88,60l2,0 0,2 -2,0 0,-2z M4,62l2,0 0,2 -2,0 0,-2z M6,62l2,0 0,2 -2,0 0,-2z M8,62l2,0 0,2 -2,0 0,-2z M10,62l2,0 0,2 -2,0 0,-2z M18,62l2,0 0,2 -2,0 0,-2z M22,62l2,0 0,2 -2,0 0,-2z M24,62l2,0 0,2 -2,0 0,-2z M26,62l2,0 0,2 -2,0 0,-2z M38,62l2,0 0,2 -2,0 0,-2z M42,62l2,0 0,2 -2,0 0,-2z M46,62l2,0 0,2 -2,0 0,-2z M48,62l2,0 0,2 -2,0 0,-2z M56,62l2,0 0,2 -2,0 0,-2z M60,62l2,0 0,2 -2,0 0,-2z M62,62l2,0 0,2 -2,0 0,-2z M64,62l2,0 0,2 -2,0 0,-2z M70,62l2,0 0,2 -2,0 0,-2z M76,62l2,0 0,2 -2,0 0,-2z M80,62l2,0 0,2 -2,0 0,-2z M82,62l2,0 0,2 -2,0 0,-2z M84,62l2,0 0,2 -2,0 0,-2z M88,62l2,0 0,2 -2,0 0,-2z M0,64l2,0 0,2 -2,0 0,-2z M10,64l2,0 0,2 -2,0 0,-2z M12,64l2,0 0,2 -2,0 0,-2z M14,64l2,0 0,2 -2,0 0,-2z M18,64l2,0 0,2 -2,0 0,-2z M20,64l2,0 0,2 -2,0 0,-2z M24,64l2,0 0,2 -2,0 0,-2z M26,64l2,0 0,2 -2,0 0,-2z M28,64l2,0 0,2 -2,0 0,-2z M30,64l2,0 0,2 -2,0 0,-2z M32,64l2,0 0,2 -2,0 0,-2z M36,64l2,0 0,2 -2,0 0,-2z M38,64l2,0 0,2 -2,0 0,-2z M44,64l2,0 0,2 -2,0 0,-2z M52,64l2,0 0,2 -2,0 0,-2z M56,64l2,0 0,2 -2,0 0,-2z M62,64l2,0 0,2 -2,0 0,-2z M66,64l2,0 0,2 -2,0 0,-2z M68,64l2,0 0,2 -2,0 0,-2z M74,64l2,0 0,2 -2,0 0,-2z M76,64l2,0 0,2 -2,0 0,-2z M80,64l2,0 0,2 -2,0 0,-2z M86,64l2,0 0,2 -2,0 0,-2z M4,66l2,0 0,2 -2,0 0,-2z M16,66l2,0 0,2 -2,0 0,-2z M18,66l2,0 0,2 -2,0 0,-2z M20,66l2,0 0,2 -2,0 0,-2z M22,66l2,0 0,2 -2,0 0,-2z M28,66l2,0 0,2 -2,0 0,-2z M32,66l2,0 0,2 -2,0 0,-2z M38,66l2,0 0,2 -2,0 0,-2z M46,66l2,0 0,2 -2,0 0,-2z M48,66l2,0 0,2 -2,0 0,-2z M50,66l2,0 0,2 -2,0 0,-2z M52,66l2,0 0,2 -2,0 0,-2z M54,66l2,0 0,2 -2,0 0,-2z M58,66l2,0 0,2 -2,0 0,-2z M60,66l2,0 0,2 -2,0 0,-2z M62,66l2,0 0,2 -2,0 0,-2z M64,66l2,0 0,2 -2,0 0,-2z M66,66l2,0 0,2 -2,0 0,-2z M68,66l2,0 0,2 -2,0 0,-2z M70,66l2,0 0,2 -2,0 0,-2z M72,66l2,0 0,2 -2,0 0,-2z M74,66l2,0 0,2 -2,0 0,-2z M78,66l2,0 0,2 -2,0 0,-2z M80,66l2,0 0,2 -2,0 0,-2z M84,66l2,0 0,2 -2,0 0,-2z M8,68l2,0 0,2 -2,0 0,-2z M12,68l2,0 0,2 -2,0 0,-2z M14,68l2,0 0,2 -2,0 0,-2z M16,68l2,0 0,2 -2,0 0,-2z M22,68l2,0 0,2 -2,0 0,-2z M26,68l2,0 0,2 -2,0 0,-2z M28,68l2,0 0,2 -2,0 0,-2z M30,68l2,0 0,2 -2,0 0,-2z M32,68l2,0 0,2 -2,0 0,-2z M34,68l2,0 0,2 -2,0 0,-2z M42,68l2,0 0,2 -2,0 0,-2z M46,68l2,0 0,2 -2,0 0,-2z M48,68l2,0 0,2 -2,0 0,-2z M50,68l2,0 0,2 -2,0 0,-2z M52,68l2,0 0,2 -2,0 0,-2z M54,68l2,0 0,2 -2,0 0,-2z M60,68l2,0 0,2 -2,0 0,-2z M62,68l2,0 0,2 -2,0 0,-2z M66,68l2,0 0,2 -2,0 0,-2z M70,68l2,0 0,2 -2,0 0,-2z M72,68l2,0 0,2 -2,0 0,-2z M74,68l2,0 0,2 -2,0 0,-2z M76,68l2,0 0,2 -2,0 0,-2z M82,68l2,0 0,2 -2,0 0,-2z M86,68l2,0 0,2 -2,0 0,-2z M88,68l2,0 0,2 -2,0 0,-2z M2,70l2,0 0,2 -2,0 0,-2z M4,70l2,0 0,2 -2,0 0,-2z M6,70l2,0 0,2 -2,0 0,-2z M8,70l2,0 0,2 -2,0 0,-2z M18,70l2,0 0,2 -2,0 0,-2z M24,70l2,0 0,2 -2,0 0,-2z M28,70l2,0 0,2 -2,0 0,-2z M30,70l2,0 0,2 -2,0 0,-2z M36,70l2,0 0,2 -2,0 0,-2z M38,70l2,0 0,2 -2,0 0,-2z M48,70l2,0 0,2 -2,0 0,-2z M52,70l2,0 0,2 -2,0 0,-2z M54,70l2,0 0,2 -2,0 0,-2z M60,70l2,0 0,2 -2,0 0,-2z M64,70l2,0 0,2 -2,0 0,-2z M66,70l2,0 0,2 -2,0 0,-2z M70,70l2,0 0,2 -2,0 0,-2z M80,70l2,0 0,2 -2,0 0,-2z M84,70l2,0 0,2 -2,0 0,-2z M0,72l2,0 0,2 -2,0 0,-2z M6,72l2,0 0,2 -2,0 0,-2z M8,72l2,0 0,2 -2,0 0,-2z M12,72l2,0 0,2 -2,0 0,-2z M16,72l2,0 0,2 -2,0 0,-2z M18,72l2,0 0,2 -2,0 0,-2z M26,72l2,0 0,2 -2,0 0,-2z M30,72l2,0 0,2 -2,0 0,-2z M32,72l2,0 0,2 -2,0 0,-2z M38,72l2,0 0,2 -2,0 0,-2z M40,72l2,0 0,2 -2,0 0,-2z M42,72l2,0 0,2 -2,0 0,-2z M44,72l2,0 0,2 -2,0 0,-2z M46,72l2,0 0,2 -2,0 0,-2z M48,72l2,0 0,2 -2,0 0,-2z M50,72l2,0 0,2 -2,0 0,-2z M56,72l2,0 0,2 -2,0 0,-2z M58,72l2,0 0,2 -2,0 0,-2z M60,72l2,0 0,2 -2,0 0,-2z M62,72l2,0 0,2 -2,0 0,-2z M64,72l2,0 0,2 -2,0 0,-2z M66,72l2,0 0,2 -2,0 0,-2z M70,72l2,0 0,2 -2,0 0,-2z M72,72l2,0 0,2 -2,0 0,-2z M74,72l2,0 0,2 -2,0 0,-2z M76,72l2,0 0,2 -2,0 0,-2z M78,72l2,0 0,2 -2,0 0,-2z M80,72l2,0 0,2 -2,0 0,-2z M82,72l2,0 0,2 -2,0 0,-2z M16,74l2,0 0,2 -2,0 0,-2z M20,74l2,0 0,2 -2,0 0,-2z M24,74l2,0 0,2 -2,0 0,-2z M34,74l2,0 0,2 -2,0 0,-2z M40,74l2,0 0,2 -2,0 0,-2z M48,74l2,0 0,2 -2,0 0,-2z M52,74l2,0 0,2 -2,0 0,-2z M54,74l2,0 0,2 -2,0 0,-2z M56,74l2,0 0,2 -2,0 0,-2z M58,74l2,0 0,2 -2,0 0,-2z M60,74l2,0 0,2 -2,0 0,-2z M64,74l2,0 0,2 -2,0 0,-2z M66,74l2,0 0,2 -2,0 0,-2z M72,74l2,0 0,2 -2,0 0,-2z M80,74l2,0 0,2 -2,0 0,-2z M82,74l2,0 0,2 -2,0 0,-2z M84,74l2,0 0,2 -2,0 0,-2z M0,76l2,0 0,2 -2,0 0,-2z M2,76l2,0 0,2 -2,0 0,-2z M4,76l2,0 0,2 -2,0 0,-2z M6,76l2,0 0,2 -2,0 0,-2z M8,76l2,0 0,2 -2,0 0,-2z M10,76l2,0 0,2 -2,0 0,-2z M12,76l2,0 0,2 -2,0 0,-2z M16,76l2,0 0,2 -2,0 0,-2z M18,76l2,0 0,2 -2,0 0,-2z M20,76l2,0 0,2 -2,0 0,-2z M24,76l2,0 0,2 -2,0 0,-2z M28,76l2,0 0,2 -2,0 0,-2z M30,76l2,0 0,2 -2,0 0,-2z M32,76l2,0 0,2 -2,0 0,-2z M34,76l2,0 0,2 -2,0 0,-2z M36,76l2,0 0,2 -2,0 0,-2z M40,76l2,0 0,2 -2,0 0,-2z M44,76l2,0 0,2 -2,0 0,-2z M48,76l2,0 0,2 -2,0 0,-2z M62,76l2,0 0,2 -2,0 0,-2z M66,76l2,0 0,2 -2,0 0,-2z M68,76l2,0 0,2 -2,0 0,-2z M70,76l2,0 0,2 -2,0 0,-2z M72,76l2,0 0,2 -2,0 0,-2z M76,76l2,0 0,2 -2,0 0,-2z M80,76l2,0 0,2 -2,0 0,-2z M82,76l2,0 0,2 -2,0 0,-2z M0,78l2,0 0,2 -2,0 0,-2z M12,78l2,0 0,2 -2,0 0,-2z M16,78l2,0 0,2 -2,0 0,-2z M22,78l2,0 0,2 -2,0 0,-2z M24,78l2,0 0,2 -2,0 0,-2z M26,78l2,0 0,2 -2,0 0,-2z M28,78l2,0 0,2 -2,0 0,-2z M32,78l2,0 0,2 -2,0 0,-2z M36,78l2,0 0,2 -2,0 0,-2z M40,78l2,0 0,2 -2,0 0,-2z M48,78l2,0 0,2 -2,0 0,-2z M52,78l2,0 0,2 -2,0 0,-2z M56,78l2,0 0,2 -2,0 0,-2z M60,78l2,0 0,2 -2,0 0,-2z M66,78l2,0 0,2 -2,0 0,-2z M68,78l2,0 0,2 -2,0 0,-2z M70,78l2,0 0,2 -2,0 0,-2z M72,78l2,0 0,2 -2,0 0,-2z M80,78l2,0 0,2 -2,0 0,-2z M82,78l2,0 0,2 -2,0 0,-2z M84,78l2,0 0,2 -2,0 0,-2z M86,78l2,0 0,2 -2,0 0,-2z M88,78l2,0 0,2 -2,0 0,-2z M0,80l2,0 0,2 -2,0 0,-2z M4,80l2,0 0,2 -2,0 0,-2z M6,80l2,0 0,2 -2,0 0,-2z M8,80l2,0 0,2 -2,0 0,-2z M12,80l2,0 0,2 -2,0 0,-2z M16,80l2,0 0,2 -2,0 0,-2z M18,80l2,0 0,2 -2,0 0,-2z M20,80l2,0 0,2 -2,0 0,-2z M30,80l2,0 0,2 -2,0 0,-2z M34,80l2,0 0,2 -2,0 0,-2z M36,80l2,0 0,2 -2,0 0,-2z M40,80l2,0 0,2 -2,0 0,-2z M42,80l2,0 0,2 -2,0 0,-2z M44,80l2,0 0,2 -2,0 0,-2z M46,80l2,0 0,2 -2,0 0,-2z M48,80l2,0 0,2 -2,0 0,-2z M50,80l2,0 0,2 -2,0 0,-2z M60,80l2,0 0,2 -2,0 0,-2z M62,80l2,0 0,2 -2,0 0,-2z M64,80l2,0 0,2 -2,0 0,-2z M66,80l2,0 0,2 -2,0 0,-2z M70,80l2,0 0,2 -2,0 0,-2z M72,80l2,0 0,2 -2,0 0,-2z M74,80l2,0 0,2 -2,0 0,-2z M76,80l2,0 0,2 -2,0 0,-2z M78,80l2,0 0,2 -2,0 0,-2z M80,80l2,0 0,2 -2,0 0,-2z M82,80l2,0 0,2 -2,0 0,-2z M84,80l2,0 0,2 -2,0 0,-2z M88,80l2,0 0,2 -2,0 0,-2z M0,82l2,0 0,2 -2,0 0,-2z M4,82l2,0 0,2 -2,0 0,-2z M6,82l2,0 0,2 -2,0 0,-2z M8,82l2,0 0,2 -2,0 0,-2z M12,82l2,0 0,2 -2,0 0,-2z M16,82l2,0 0,2 -2,0 0,-2z M18,82l2,0 0,2 -2,0 0,-2z M30,82l2,0 0,2 -2,0 0,-2z M40,82l2,0 0,2 -2,0 0,-2z M42,82l2,0 0,2 -2,0 0,-2z M44,82l2,0 0,2 -2,0 0,-2z M46,82l2,0 0,2 -2,0 0,-2z M54,82l2,0 0,2 -2,0 0,-2z M60,82l2,0 0,2 -2,0 0,-2z M64,82l2,0 0,2 -2,0 0,-2z M68,82l2,0 0,2 -2,0 0,-2z M72,82l2,0 0,2 -2,0 0,-2z M74,82l2,0 0,2 -2,0 0,-2z M78,82l2,0 0,2 -2,0 0,-2z M82,82l2,0 0,2 -2,0 0,-2z M84,82l2,0 0,2 -2,0 0,-2z M86,82l2,0 0,2 -2,0 0,-2z M88,82l2,0 0,2 -2,0 0,-2z M0,84l2,0 0,2 -2,0 0,-2z M4,84l2,0 0,2 -2,0 0,-2z M6,84l2,0 0,2 -2,0 0,-2z M8,84l2,0 0,2 -2,0 0,-2z M12,84l2,0 0,2 -2,0 0,-2z M20,84l2,0 0,2 -2,0 0,-2z M26,84l2,0 0,2 -2,0 0,-2z M30,84l2,0 0,2 -2,0 0,-2z M36,84l2,0 0,2 -2,0 0,-2z M42,84l2,0 0,2 -2,0 0,-2z M44,84l2,0 0,2 -2,0 0,-2z M46,84l2,0 0,2 -2,0 0,-2z M48,84l2,0 0,2 -2,0 0,-2z M50,84l2,0 0,2 -2,0 0,-2z M54,84l2,0 0,2 -2,0 0,-2z M56,84l2,0 0,2 -2,0 0,-2z M60,84l2,0 0,2 -2,0 0,-2z M66,84l2,0 0,2 -2,0 0,-2z M68,84l2,0 0,2 -2,0 0,-2z M72,84l2,0 0,2 -2,0 0,-2z M74,84l2,0 0,2 -2,0 0,-2z M76,84l2,0 0,2 -2,0 0,-2z M80,84l2,0 0,2 -2,0 0,-2z M84,84l2,0 0,2 -2,0 0,-2z M88,84l2,0 0,2 -2,0 0,-2z M0,86l2,0 0,2 -2,0 0,-2z M12,86l2,0 0,2 -2,0 0,-2z M18,86l2,0 0,2 -2,0 0,-2z M22,86l2,0 0,2 -2,0 0,-2z M26,86l2,0 0,2 -2,0 0,-2z M28,86l2,0 0,2 -2,0 0,-2z M30,86l2,0 0,2 -2,0 0,-2z M32,86l2,0 0,2 -2,0 0,-2z M34,86l2,0 0,2 -2,0 0,-2z M36,86l2,0 0,2 -2,0 0,-2z M38,86l2,0 0,2 -2,0 0,-2z M40,86l2,0 0,2 -2,0 0,-2z M44,86l2,0 0,2 -2,0 0,-2z M48,86l2,0 0,2 -2,0 0,-2z M50,86l2,0 0,2 -2,0 0,-2z M58,86l2,0 0,2 -2,0 0,-2z M62,86l2,0 0,2 -2,0 0,-2z M72,86l2,0 0,2 -2,0 0,-2z M76,86l2,0 0,2 -2,0 0,-2z M78,86l2,0 0,2 -2,0 0,-2z M80,86l2,0 0,2 -2,0 0,-2z M82,86l2,0 0,2 -2,0 0,-2z M84,86l2,0 0,2 -2,0 0,-2z M86,86l2,0 0,2 -2,0 0,-2z M88,86l2,0 0,2 -2,0 0,-2z M0,88l2,0 0,2 -2,0 0,-2z M2,88l2,0 0,2 -2,0 0,-2z M4,88l2,0 0,2 -2,0 0,-2z M6,88l2,0 0,2 -2,0 0,-2z M8,88l2,0 0,2 -2,0 0,-2z M10,88l2,0 0,2 -2,0 0,-2z M12,88l2,0 0,2 -2,0 0,-2z M16,88l2,0 0,2 -2,0 0,-2z M22,88l2,0 0,2 -2,0 0,-2z M28,88l2,0 0,2 -2,0 0,-2z M34,88l2,0 0,2 -2,0 0,-2z M42,88l2,0 0,2 -2,0 0,-2z M48,88l2,0 0,2 -2,0 0,-2z M52,88l2,0 0,2 -2,0 0,-2z M54,88l2,0 0,2 -2,0 0,-2z M56,88l2,0 0,2 -2,0 0,-2z M58,88l2,0 0,2 -2,0 0,-2z M60,88l2,0 0,2 -2,0 0,-2z M68,88l2,0 0,2 -2,0 0,-2z M72,88l2,0 0,2 -2,0 0,-2z M74,88l2,0 0,2 -2,0 0,-2z M76,88l2,0 0,2 -2,0 0,-2z M82,88l2,0 0,2 -2,0 0,-2z M84,88l2,0 0,2 -2,0 0,-2z " stroke="transparent" fill="black"></path></svg></div>
+                                <div id="qrCodeBox" style="width: 20.5mm; height: 20.5mm; background: #ffffff; padding: 1.2mm; border-radius: 2mm; border: 0.25mm solid rgba(0, 122, 51, 0.22); box-shadow: 0 2px 5px rgba(0,0,0,0.06); display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
+                                </div>
                             </div>
 
                         </div>
@@ -1261,7 +516,9 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
                         </div>
 
                         <!-- Dati Societari a piè di pagina -->
-                        <div id="backLegalFooter" style="font-size: 5.1pt; color: #64748b; text-align: center; line-height: 1.25; border-top: 0.2mm solid #cbd5e1; padding-top: 1.3mm;">EcorNaturaSì S.p.A. SB - Sede Legale: Via Palù 23, z.a. Zoppè, 31020 San Vendemiano (TV) - P.IVA 02010550263</div>
+                        <div id="backLegalFooter" style="font-size: 5.1pt; color: #64748b; text-align: center; line-height: 1.25; border-top: 0.2mm solid #cbd5e1; padding-top: 1.3mm;">
+                            EcorNaturaSì S.p.A. SB - Sede Legale: Via Palù 23, z.a. Zoppè, 31020 San Vendemiano (TV) - P.IVA 02010550263
+                        </div>
 
                     </div>
 
@@ -1290,26 +547,27 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
 
             <!-- Viewport Ritaglio Proporzione Badge (21 : 28.5 = 252 x 342 px) -->
             <div class="flex justify-center">
-                <div id="cropViewport" class="relative overflow-hidden rounded-xl border-2 border-[#84cc16] bg-slate-950 cursor-grab active:cursor-grabbing select-none" style="width: 240px; height: 326px; touch-action: none;">
+                <div id="cropViewport" class="relative overflow-hidden rounded-xl border-2 border-[#84cc16] bg-slate-950 cursor-grab active:cursor-grabbing select-none"
+                    style="width: 240px; height: 326px; touch-action: none;">
                     <canvas id="cropCanvas" width="240" height="326" class="block w-full h-full"></canvas>
                     <!-- Guida ovale standard ID per centraggio viso e spalle -->
                     <svg viewBox="0 0 240 326" class="pointer-events-none absolute inset-0 w-full h-full">
                         <defs>
                             <mask id="idOvalMask">
-                                <rect width="240" height="326" fill="white"></rect>
-                                <ellipse cx="120" cy="134" rx="64" ry="84" fill="black"></ellipse>
-                                <path d="M 26 326 C 34 260, 74 240, 120 240 C 166 240, 206 260, 214 326 Z" fill="black"></path>
+                                <rect width="240" height="326" fill="white" />
+                                <ellipse cx="120" cy="134" rx="64" ry="84" fill="black" />
+                                <path d="M 26 326 C 34 260, 74 240, 120 240 C 166 240, 206 260, 214 326 Z" fill="black" />
                             </mask>
                         </defs>
                         <!-- Leggera ombreggiatura esterna per evidenziare l'area del volto -->
-                        <rect width="240" height="326" fill="rgba(15, 23, 42, 0.45)" mask="url(#idOvalMask)"></rect>
+                        <rect width="240" height="326" fill="rgba(15, 23, 42, 0.45)" mask="url(#idOvalMask)" />
                         <!-- Ovale tratteggiato per il viso -->
-                        <ellipse cx="120" cy="134" rx="64" ry="84" fill="none" stroke="#84cc16" stroke-width="2" stroke-dasharray="6 4"></ellipse>
+                        <ellipse cx="120" cy="134" rx="64" ry="84" fill="none" stroke="#84cc16" stroke-width="2" stroke-dasharray="6 4" />
                         <!-- Linea guida spalle -->
-                        <path d="M 26 326 C 34 260, 74 240, 120 240 C 166 240, 206 260, 214 326" fill="none" stroke="rgba(255, 255, 255, 0.55)" stroke-width="1.5" stroke-dasharray="5 4"></path>
+                        <path d="M 26 326 C 34 260, 74 240, 120 240 C 166 240, 206 260, 214 326" fill="none" stroke="rgba(255, 255, 255, 0.55)" stroke-width="1.5" stroke-dasharray="5 4" />
                         <!-- Assi di simmetria occhi / centro viso -->
-                        <line x1="120" y1="62" x2="120" y2="206" stroke="rgba(255, 255, 255, 0.28)" stroke-width="1" stroke-dasharray="3 3"></line>
-                        <line x1="68" y1="126" x2="172" y2="126" stroke="rgba(255, 255, 255, 0.28)" stroke-width="1" stroke-dasharray="3 3"></line>
+                        <line x1="120" y1="62" x2="120" y2="206" stroke="rgba(255, 255, 255, 0.28)" stroke-width="1" stroke-dasharray="3 3" />
+                        <line x1="68" y1="126" x2="172" y2="126" stroke="rgba(255, 255, 255, 0.28)" stroke-width="1" stroke-dasharray="3 3" />
                     </svg>
                 </div>
             </div>
@@ -1380,383 +638,9 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
 
         let selectedCompanyKey = 'ecornaturasi';
 
-        // Stato asset caricati opzionalmente dall'utente per anteprima/ZIP
-        const customAssets = {
-            logoBianco: null,
-            lemniscata: null,
-            fonts: []
-        };
-
         // Riferimenti DOM
         const inputs = {
-            nome: document.getElementById('nomeInput'),
-            cognome: document.getElementById('cognomeInput'),
-            ruolo: document.getElementById('ruoloSelect'),
-            matricola: document.getElementById('matricolaInput'),
-            telefono: document.getElementById('telefonoInput'),
-            nascita: document.getElementById('nascitaInput'),
-            assunzione: document.getElementById('assunzioneInput')
-        };
-
-        const outputs = {
-            frontCompanyTag: document.getElementById('frontCompanyTag'),
-            badgeFront: document.getElementById('badgeFront'),
-            frontAccentBar: document.getElementById('frontAccentBar'),
-            nome: document.getElementById('nomeOut'),
-            cognome: document.getElementById('cognomeOut'),
-            ruolo: document.getElementById('ruoloOut'),
-            qrCodeBox: document.getElementById('qrCodeBox'),
-            backImpresa: document.getElementById('backImpresaOut'),
-            backMatricola: document.getElementById('backMatricolaOut'),
-            backNascita: document.getElementById('backNascitaOut'),
-            backAssunzione: document.getElementById('backAssunzioneOut'),
-            backTelefono: document.getElementById('backTelefonoOut'),
-            backLegalFooter: document.getElementById('backLegalFooter')
-        };
-
-        function showToast(msg) {
-            const toast = document.getElementById('toast');
-            if (!toast) return;
-            toast.textContent = msg;
-            toast.classList.remove('hidden');
-            clearTimeout(window._toastTimer);
-            window._toastTimer = setTimeout(() => toast.classList.add('hidden'), 3500);
-        }
-
-        // Formatta data YYYY-MM-DD in gg.mm.aaaa
-        function formatItalianDate(isoDate) {
-            if (!isoDate) return '—';
-            const parts = isoDate.split('-');
-            if (parts.length !== 3) return isoDate;
-            return `${parts[2]}.${parts[1]}.${parts[0]}`;
-        }
-
-        // Aggiunge in automatico +39 al numero di telefono senza duplicarlo
-        function formatPhoneAutomatic(raw) {
-            const cleaned = raw.trim();
-            if (!cleaned) return '';
-            if (cleaned.startsWith('+')) return cleaned;
-            if (cleaned.startsWith('0039')) return '+39 ' + cleaned.slice(4).trim();
-            if (cleaned.startsWith('39') && cleaned.length >= 11) return '+39 ' + cleaned.slice(2).trim();
-            return '+39 ' + cleaned;
-        }
-
-        // Adatta dinamicamente il font affinché il testo stia SEMPRE su una singola riga
-        function fitSingleLineText(el, container, maxPt, minPt) {
-            if (!el || !container) return;
-            el.style.fontSize = maxPt + 'pt';
-            const availableWidth = container.clientWidth;
-            const textWidth = el.scrollWidth;
-            if (availableWidth > 0 && textWidth > availableWidth) {
-                const ratio = availableWidth / textWidth;
-                const fittedPt = Math.max(minPt, Math.floor(maxPt * ratio * 10) / 10);
-                el.style.fontSize = fittedPt + 'pt';
-            }
-        }
-
-        // Genera il QR Code vCard in formato SVG vettoriale ad alta leggibilità
-        function renderVCardQR(nome, cognome, ruolo, telefono, companyObj) {
-            if (!outputs.qrCodeBox || typeof qrcode === 'undefined') return;
-
-            const nFirst = nome || 'Collaboratore';
-            const nLast = cognome || 'NaturaSi';
-            const telClean = telefono ? telefono.replace(/\s+/g, '') : '';
-
-            const vcardLines = [
-                'BEGIN:VCARD',
-                'VERSION:3.0',
-                `N:${nLast};${nFirst};;;`,
-                `FN:${nFirst} ${nLast}`.trim(),
-                `ORG:${companyObj.legalName}`,
-                ruolo ? `TITLE:${ruolo}` : '',
-                telClean ? `TEL;TYPE=CELL,VOICE:${telClean}` : '',
-                'END:VCARD'
-            ].filter(Boolean).join('\r\n');
-
-            try {
-                const qr = qrcode(0, 'M');
-                qr.addData(vcardLines, 'Byte');
-                qr.make();
-                const svgTag = qr.createSvgTag({ scalable: true, margin: 0 });
-                outputs.qrCodeBox.innerHTML = svgTag;
-                const svgEl = outputs.qrCodeBox.querySelector('svg');
-                if (svgEl) {
-                    svgEl.style.width = '100%';
-                    svgEl.style.height = '100%';
-                    svgEl.style.display = 'block';
-                    svgEl.querySelectorAll('rect').forEach((r, idx) => {
-                        if (idx > 0) r.setAttribute('fill', '#007A33');
-                    });
-                }
-            } catch (e) {
-                console.error('Errore generazione QR:', e);
-            }
-        }
-
-        // Funzione principale di aggiornamento anteprima
-        function updateBadge() {
-            const rawNome = inputs.nome ? inputs.nome.value.trim() : '';
-            const rawCognome = inputs.cognome ? inputs.cognome.value.trim() : '';
-            const selectedRole = inputs.ruolo ? inputs.ruolo.value : '';
-            const rawMatricola = inputs.matricola ? inputs.matricola.value.trim() : '';
-            const rawTelefono = inputs.telefono ? inputs.telefono.value : '';
-            const rawNascita = inputs.nascita ? inputs.nascita.value : '';
-            const rawAssunzione = inputs.assunzione ? inputs.assunzione.value : '';
-
-            const companyObj = COMPANIES[selectedCompanyKey] || COMPANIES.ecornaturasi;
-            const formattedPhone = formatPhoneAutomatic(rawTelefono);
-            const textCol = document.getElementById('textColumn');
-
-            // 1. Azienda selezionata
-            outputs.frontCompanyTag.textContent = companyObj.shortName;
-            outputs.backImpresa.textContent = companyObj.legalName;
-            outputs.backLegalFooter.textContent = companyObj.footer;
-
-            // 2. Nome (sempre su una singola riga, in evidenza)
-            if (rawNome) {
-                outputs.nome.textContent = rawNome;
-                outputs.nome.style.color = '#111827';
-            } else {
-                outputs.nome.textContent = 'NOME';
-                outputs.nome.style.color = '#9ca3af';
-            }
-            fitSingleLineText(outputs.nome, textCol, 22, 8.5);
-
-            // 3. Cognome (sempre su una singola riga)
-            if (rawCognome) {
-                outputs.cognome.textContent = rawCognome;
-                outputs.cognome.style.color = '#374151';
-            } else {
-                outputs.cognome.textContent = 'Cognome';
-                outputs.cognome.style.color = '#9ca3af';
-            }
-            fitSingleLineText(outputs.cognome, textCol, 12.5, 7.5);
-
-            // 4. Ruolo e Colore B.U. (con a capo esatto dopo "&" per B.U. Grocery & Relex Store Planner)
-            const activePalette = ROLE_PALETTES[selectedRole] || { accent: '#007A33', bgEnd: '#dcfce7' };
-
-            if (selectedRole === 'B.U. Grocery & Relex Store Planner') {
-                outputs.ruolo.innerHTML = 'B.U. Grocery &amp;<br>Relex Store Planner';
-                outputs.ruolo.style.color = activePalette.accent;
-            } else if (selectedRole) {
-                outputs.ruolo.textContent = selectedRole;
-                outputs.ruolo.style.color = activePalette.accent;
-            } else {
-                outputs.ruolo.textContent = 'Ruolo / B.U.';
-                outputs.ruolo.style.color = '#007A33';
-            }
-
-            outputs.badgeFront.style.background = `linear-gradient(135deg, #ffffff 30%, ${activePalette.bgEnd} 100%)`;
-            outputs.frontAccentBar.style.backgroundColor = activePalette.accent;
-
-            // 5. Dati Retro (in minuscolo come richiesto)
-            outputs.backMatricola.textContent = rawMatricola ? rawMatricola.toLowerCase() : '—';
-            outputs.backNascita.textContent = formatItalianDate(rawNascita);
-            outputs.backAssunzione.textContent = formatItalianDate(rawAssunzione);
-            outputs.backTelefono.textContent = formattedPhone ? formattedPhone.toLowerCase() : '—';
-
-            // 6. QR Code vCard
-            renderVCardQR(rawNome, rawCognome, selectedRole, formattedPhone, companyObj);
-        }
-
-        // Selezione Azienda
-        document.querySelectorAll('.company-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                selectedCompanyKey = btn.dataset.company;
-                document.querySelectorAll('.company-btn').forEach(b => {
-                    b.className = 'company-btn text-left p-2.5 rounded-xl border border-slate-700 bg-slate-800/60 hover:border-slate-500 transition cursor-pointer';
-                    const sub = b.querySelector('div:last-child');
-                    if (sub) sub.className = 'text-[10px] text-slate-400 truncate';
-                });
-                btn.className = 'company-btn text-left p-2.5 rounded-xl border-2 border-[#007A33] bg-[#007A33]/15 transition cursor-pointer';
-                const activeSub = btn.querySelector('div:last-child');
-                if (activeSub) activeSub.className = 'text-[10px] text-emerald-300 truncate';
-                updateBadge();
-            });
-        });
-
-        // Collegamento eventi campi input
-        Object.values(inputs).forEach(el => {
-            if (el) {
-                el.addEventListener('input', updateBadge);
-                el.addEventListener('change', updateBadge);
-            }
-        });
-
-        // Pulsante Svuota Campi
-        document.getElementById('resetBtn').addEventListener('click', () => {
-            Object.values(inputs).forEach(el => {
-                if (el) el.value = '';
-            });
-            resetPhoto();
-            updateBadge();
-            showToast('Tutti i campi sono stati svuotati.');
-        });
-
-        // ================= EDITOR INTERATTIVO RITAGLIO FOTO =================
-        const dropZone = document.getElementById('dropZone');
-        const photoInput = document.getElementById('photoInput');
-        const cropModal = document.getElementById('cropModal');
-        const cropCanvas = document.getElementById('cropCanvas');
-        const cropCtx = cropCanvas.getContext('2d');
-        const cropZoomSlider = document.getElementById('cropZoomSlider');
-
-        let sourceImage = null;
-        let cropState = { x: 0, y: 0, scale: 1, rotation: 0, isDragging: false, startX: 0, startY: 0 };
-
-        function openCropModal() {
-            if (!sourceImage) return;
-            cropModal.classList.remove('hidden');
-            cropModal.classList.add('flex');
-            drawCropCanvas();
-        }
-
-        function closeCropModal() {
-            cropModal.classList.add('hidden');
-            cropModal.classList.remove('flex');
-        }
-
-        function drawCropCanvas() {
-            if (!sourceImage) return;
-            const cw = cropCanvas.width;
-            const ch = cropCanvas.height;
-            cropCtx.clearRect(0, 0, cw, ch);
-            cropCtx.fillStyle = '#0f172a';
-            cropCtx.fillRect(0, 0, cw, ch);
-
-            cropCtx.save();
-            cropCtx.translate(cw / 2 + cropState.x, ch / 2 + cropState.y);
-            cropCtx.rotate((cropState.rotation * Math.PI) / 180);
-            cropCtx.scale(cropState.scale, cropState.scale);
-            cropCtx.drawImage(sourceImage, -sourceImage.width / 2, -sourceImage.height / 2);
-            cropCtx.restore();
-        }
-
-        function loadPhotoFile(file) {
-            if (!file || !file.type.startsWith('image/')) return;
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                const img = new Image();
-                img.onload = () => {
-                    sourceImage = img;
-                    const fitScale = Math.max(cropCanvas.width / img.width, cropCanvas.height / img.height);
-                    cropState = { x: 0, y: 0, scale: fitScale, rotation: 0, isDragging: false, startX: 0, startY: 0 };
-                    cropZoomSlider.min = (fitScale * 0.5).toFixed(2);
-                    cropZoomSlider.max = (fitScale * 3.5).toFixed(2);
-                    cropZoomSlider.value = fitScale.toFixed(2);
-                    openCropModal();
-                };
-                img.src = e.target.result;
-            };
-            reader.readAsDataURL(file);
-        }
-
-        function resetPhoto() {
-            sourceImage = null;
-            photoInput.value = '';
-            document.getElementById('badgePhotoOut').style.display = 'none';
-            document.getElementById('badgePhotoOut').src = '';
-            document.getElementById('badgePhotoPlaceholder').style.display = 'block';
-            document.getElementById('photoEmptyState').classList.remove('hidden');
-            document.getElementById('photoReadyState').classList.add('hidden');
-            document.getElementById('photoReadyState').classList.remove('flex');
-        }
-
-        dropZone.addEventListener('click', (e) => {
-            if (e.target.closest('#reopenCropBtn') || e.target.closest('#removePhotoBtn')) return;
-            photoInput.click();
-        });
-
-        dropZone.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            dropZone.classList.add('border-[#84cc16]');
-        });
-        dropZone.addEventListener('dragleave', () => {
-            dropZone.classList.remove('border-[#84cc16]');
-        });
-        dropZone.addEventListener('drop', (e) => {
-            e.preventDefault();
-            dropZone.classList.remove('border-[#84cc16]');
-            if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-                loadPhotoFile(e.dataTransfer.files[0]);
-            }
-        });
-
-        photoInput.addEventListener('change', (e) => {
-            if (e.target.files && e.target.files[0]) {
-                loadPhotoFile(e.target.files[0]);
-            }
-        });
-
-        // Trascinamento sul canvas di ritaglio (Mouse + Touch)
-        cropCanvas.addEventListener('pointerdown', (e) => {
-            cropState.isDragging = true;
-            cropState.startX = e.clientX - cropState.x;
-            cropState.startY = e.clientY - cropState.y;
-            cropCanvas.setPointerCapture(e.pointerId);
-        });
-        cropCanvas.addEventListener('pointermove', (e) => {
-            if (!cropState.isDragging) return;
-            cropState.x = e.clientX - cropState.startX;
-            cropState.y = e.clientY - cropState.startY;
-            drawCropCanvas();
-        });
-        cropCanvas.addEventListener('pointerup', () => {
-            cropState.isDragging = false;
-        });
-
-        cropCanvas.addEventListener('wheel', (e) => {
-            e.preventDefault();
-            const delta = e.deltaY < 0 ? 1.06 : 0.94;
-            const newScale = Math.min(parseFloat(cropZoomSlider.max), Math.max(parseFloat(cropZoomSlider.min), cropState.scale * delta));
-            cropState.scale = newScale;
-            cropZoomSlider.value = newScale.toFixed(2);
-            drawCropCanvas();
-        }, { passive: false });
-
-        cropZoomSlider.addEventListener('input', () => {
-            cropState.scale = parseFloat(cropZoomSlider.value);
-            drawCropCanvas();
-        });
-
-        document.getElementById('rotatePhotoBtn').addEventListener('click', () => {
-            cropState.rotation = (cropState.rotation + 90) % 360;
-            drawCropCanvas();
-        });
-
-        document.getElementById('confirmCropBtn').addEventListener('click', () => {
-            // Esporta ad alta risoluzione per stampa nitida
-            const exportCanvas = document.createElement('canvas');
-            exportCanvas.width = 480;
-            exportCanvas.height = 652;
-            const exCtx = exportCanvas.getContext('2d');
-            exCtx.fillStyle = '#ffffff';
-            exCtx.fillRect(0, 0, exportCanvas.width, exportCanvas.height);
-            exCtx.save();
-            exCtx.translate(exportCanvas.width / 2 + cropState.x * 2, exportCanvas.height / 2 + cropState.y * 2);
-            exCtx.rotate((cropState.rotation * Math.PI) / 180);
-            exCtx.scale(cropState.scale * 2, cropState.scale * 2);
-            if (sourceImage) {
-                exCtx.drawImage(sourceImage, -sourceImage.width / 2, -sourceImage.height / 2);
-            }
-            exCtx.restore();
-
-            const croppedDataUrl = exportCanvas.toDataURL('image/jpeg', 0.92);
-            const badgePhoto = document.getElementById('badgePhotoOut');
-            badgePhoto.src = croppedDataUrl;
-            badgePhoto.style.display = 'block';
-            document.getElementById('badgePhotoPlaceholder').style.display = 'none';
-
-            document.getElementById('thumbPreview').src = croppedDataUrl;
-            document.getElementById('photoEmptyState').classList.add('hidden');
-            const readyState = document.getElementById('photoReadyState');
-            readyState.classList.remove('hidden');
-            readyState.classList.add('flex');
-
-            closeCropModal();
-            showToast('Fotografia applicata al badge.');
-        });
-
+// ... existing code ... -->
         document.getElementById('closeCropModalBtn').addEventListener('click', closeCropModal);
         document.getElementById('cancelCropBtn').addEventListener('click', closeCropModal);
         document.getElementById('reopenCropBtn').addEventListener('click', openCropModal);
@@ -1765,126 +649,6 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
             showToast('Fotografia rimossa.');
         });
 
-        // ================= CARICAMENTO LOGHI UFFICIALI E FONT =================
-        document.getElementById('assetLogoBianco').addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (!file) return;
-            customAssets.logoBianco = file;
-            const url = URL.createObjectURL(file);
-            const img = document.getElementById('logoBiancoImg');
-            img.src = url;
-            img.style.display = 'block';
-            document.getElementById('logoBiancoMissingHint').style.display = 'none';
-            showToast('Logo bianco ufficiale caricato.');
-        });
-
-        document.getElementById('assetLemniscata').addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (!file) return;
-            customAssets.lemniscata = file;
-            const url = URL.createObjectURL(file);
-            const img = document.getElementById('lemniscataImg');
-            img.src = url;
-            img.style.display = 'block';
-            document.getElementById('lemniscataMissingHint').style.display = 'none';
-            showToast('Lemniscata ufficiale caricata.');
-        });
-
-        document.getElementById('assetFonts').addEventListener('change', async (e) => {
-            const files = Array.from(e.target.files);
-            if (!files.length) return;
-            customAssets.fonts = files;
-            for (const f of files) {
-                const buf = await f.arrayBuffer();
-                const isBold = f.name.toLowerCase().includes('bold');
-                const face = new FontFace('Futura BT', buf, { weight: isBold ? '700' : '500' });
-                await face.load();
-                document.fonts.add(face);
-            }
-            updateBadge();
-            showToast('Font Futura BT caricati.');
-        });
-
-        // ================= GENERATORE PACCHETTO ZIP PER GITHUB (nsibadge) =================
-        document.getElementById('downloadZipBtn').addEventListener('click', async () => {
-            if (typeof JSZip === 'undefined') {
-                showToast('Libreria ZIP non disponibile.');
-                return;
-            }
-            try {
-                const zip = new JSZip();
-
-                // Clona il DOM e ripristina i percorsi relativi puliti per GitHub Pages
-                const clonedDoc = document.documentElement.cloneNode(true);
-                const clonedLogo = clonedDoc.querySelector('#logoBiancoImg');
-                if (clonedLogo) {
-                    clonedLogo.setAttribute('src', 'Logo-bianco.png');
-                    clonedLogo.style.display = 'block';
-                    delete clonedLogo.dataset.triedAlt;
-                }
-                const clonedLogoHint = clonedDoc.querySelector('#logoBiancoMissingHint');
-                if (clonedLogoHint) clonedLogoHint.style.display = 'none';
-
-                const clonedLem = clonedDoc.querySelector('#lemniscataImg');
-                if (clonedLem) {
-                    clonedLem.setAttribute('src', 'lemniscata.png');
-                    clonedLem.style.display = 'block';
-                    delete clonedLem.dataset.triedAlt;
-                }
-                const clonedLemHint = clonedDoc.querySelector('#lemniscataMissingHint');
-                if (clonedLemHint) clonedLemHint.style.display = 'none';
-
-                const clonedPhoto = clonedDoc.querySelector('#badgePhotoOut');
-                if (clonedPhoto) {
-                    clonedPhoto.setAttribute('src', '');
-                    clonedPhoto.style.display = 'none';
-                }
-                const clonedPhotoPh = clonedDoc.querySelector('#badgePhotoPlaceholder');
-                if (clonedPhotoPh) clonedPhotoPh.style.display = 'block';
-
-                const clonedModal = clonedDoc.querySelector('#cropModal');
-                if (clonedModal) {
-                    clonedModal.classList.add('hidden');
-                    clonedModal.classList.remove('flex');
-                }
-
-                const htmlSource = '<!DOCTYPE html>\n' + clonedDoc.outerHTML;
-                zip.file('index.html', htmlSource);
-                zip.file('.nojekyll', '');
-                zip.file('README.md', `# NaturaSì Badge Studio (nsibadge)\n\nApplicazione web per la generazione e stampa su foglio A4 di tessere di riconoscimento aziendali CR80 (86x54 mm) fronte/retro conformi al D.Lgs. 81/08.\n\n## File nella repository\n- \`index.html\` (Applicazione principale)\n- \`Logo-bianco.png\` (Logo istituzionale bianco)\n- \`lemniscata.png\` (Elemento grafico lemniscata)\n- \`futura-md-bt-medium.ttf\` (Font Futura Medium BT)\n- \`futura-bold-bt.ttf\` (Font Futura Bold BT)\n`);
-
-                if (customAssets.logoBianco) {
-                    zip.file('Logo-bianco.png', customAssets.logoBianco);
-                }
-                if (customAssets.lemniscata) {
-                    zip.file('lemniscata.png', customAssets.lemniscata);
-                }
-                for (const f of customAssets.fonts) {
-                    zip.file(f.name, f);
-                }
-
-                const blob = await zip.generateAsync({ type: 'blob' });
-                const blobUrl = URL.createObjectURL(blob);
-                const link = document.createElement('a');
-                link.href = blobUrl;
-                link.download = 'nsibadge-github.zip';
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-                setTimeout(() => URL.revokeObjectURL(blobUrl), 10000);
-                showToast('Pacchetto nsibadge-github.zip scaricato!');
-            } catch (err) {
-                console.error(err);
-                showToast('Errore nella creazione dello ZIP.');
-            }
-        });
-
         // Inizializzazione al caricamento pagina e font
         window.addEventListener('DOMContentLoaded', updateBadge);
-        window.addEventListener('load', updateBadge);
-        if (document.fonts && document.fonts.ready) {
-            document.fonts.ready.then(updateBadge);
-        }
-    </script>
-
-</body></html>
+// ... existing code ... -->
